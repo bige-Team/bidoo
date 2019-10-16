@@ -88,8 +88,12 @@ function create_html_table()
 	echo "</table>";
 }
 
-create_html_table();
+function empty_table()
+{
+	query("TRUNCATE TABLE bidoo_data");
+}
 
+create_html_table();
 /*
 insert_line("231;giannimario;193028374;3");
 insert_line("324;ivan;193028374;1");
