@@ -40,7 +40,10 @@
 		$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$ids[30].'&LISTID=0');	//stringa del file php
 		echo "<br><br>$s";
 
-		generaFile($s);
+		for ($i=0; $i <count($ids) ; $i++) { 
+			generaFile($s, $ids[$i]);
+		}
+		
 	}
 	function generaFile($s) {	//ANALIZZO IL FILE PHP
 		$pezzi = explode("|", $s);	//contiene tutte le info di ogni puntatore
@@ -63,6 +66,7 @@
 
 			//print_r($pezzi);
 			$finale = implode("\n", $pezzi);	//stringa contenente i dati dell'asta
+			$finale .= "\n";
 			file_put_contents("puntate.txt", $finale, FILE_APPEND | LOCK_EX);
 		}
 	}
