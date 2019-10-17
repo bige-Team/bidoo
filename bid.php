@@ -44,7 +44,7 @@
 		
 	}
 
-	/*	@return array[]
+	/*	@return array[] 
 	 *	(da finire)
 	 *	funzione che passato il link ed il nome restituisce un array che alla pos 0 ha il nome del prodotto, nelle altre posizioni contiene lo storico delle puntate
 	*/	
