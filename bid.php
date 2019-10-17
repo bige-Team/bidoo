@@ -35,19 +35,33 @@
 		//print_r($ids);
 		//echo "<br><br>$s";
 
+		/*
 		for ($i=0; $i <count($ids) ; $i++) { 
 			$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$ids[$i].'&LISTID=0');	//stringa del file php
 			
 			generaFile($s, $links[$i]);
 			//echo "\n".$links[$i];
 		}
+		*/
+
 		
 	}
 
 	/*	@return array[]
 	 *	(da finire)
 	 *	funzione che passato il link ed il nome restituisce un array che alla pos 0 ha il nome del prodotto, nelle altre posizioni contiene lo storico delle puntate
-	*/	
+	*/
+
+	function checkAndWrite($id, $arr) {
+		$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$id.'&LISTID=0');
+
+		$arr1 = generaFile($s, 'prova.txt');
+		$fin = array_unique(array_merge($arr, $arr1));
+
+		sleep(5);
+		checkAndWrite($id, $fin);
+	}
+
 	function generaFile($s, $name) {	//ANALIZZO IL FILE PHP
 		$pezzi = explode("|", $s);	//contiene tutte le info di ogni puntatore
 
@@ -58,6 +72,10 @@
 			
 			$primaRiga1 = explode(";", $primoPezzo[0]);
 			$primaRiga2 = explode(";", $primoPezzo[1]);
+
+			if($primaRiga1[1] == 'OFF') {	//asta conclusa
+				file_put_contents($name, $fin);
+			}
 
 			if($primaRiga1[1] != 'STOP') {
 				//prendo l'ultimo utente che ha puntato
@@ -70,10 +88,11 @@
 				$pezzi[0] = $primo;	//array con le info delle puntate dell'asta
 				$pezzi[count($pezzi)-1] = substr($pezzi[count($pezzi)-1], 0, -3);
 
+				return $pezzi;
 				//print_r($pezzi);
-				$finale = implode("\n", $pezzi);	//stringa contenente i dati dell'asta
-				$finale .= "\n";
-				file_put_contents('data/'.$name.'.txt', $finale, FILE_APPEND | LOCK_EX);
+				//finale = implode("\n", $pezzi);	//stringa contenente i dati dell'asta
+				//$finale .= "\n";
+				//file_put_contents('data/'.$name.'.txt', $finale, FILE_APPEND | LOCK_EX);
 			}
 		}
 	}
