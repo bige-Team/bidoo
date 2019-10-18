@@ -35,12 +35,14 @@
 		//print_r($ids);
 		//echo "<br><br>$s";
 
+		/*
 		for ($i=0; $i <count($ids) ; $i++) { 
 			$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$ids[$i].'&LISTID=0');	//stringa del file php
 			
 			generaFile($s, $links[$i]);
 			//echo "\n".$links[$i];
 		}
+		*/
 		
 	}
 
@@ -48,7 +50,7 @@
 	 *	(da finire)
 	 *	funzione che passato il link ed il nome restituisce un array che alla pos 0 ha il nome del prodotto, nelle altre posizioni contiene lo storico delle puntate
 	*/	
-	function generaFile($s, $name) {	//ANALIZZO IL FILE PHP
+	function generaArray($s) {	//ANALIZZO IL FILE PHP
 		$pezzi = explode("|", $s);	//contiene tutte le info di ogni puntatore
 
 		//1571240953*[8266194;ON;1571241000;1;;,]()		asta che deve ancora iniziare
@@ -70,18 +72,20 @@
 				$pezzi[0] = $primo;	//array con le info delle puntate dell'asta
 				$pezzi[count($pezzi)-1] = substr($pezzi[count($pezzi)-1], 0, -3);
 
+				return $pezzi;
 				//print_r($pezzi);
+				/*
 				$finale = implode("\n", $pezzi);	//stringa contenente i dati dell'asta
 				$finale .= "\n";
 				file_put_contents('data/'.$name.'.txt', $finale, FILE_APPEND | LOCK_EX);
+				*/
 			}
 		}
 	}
-		//1571146529*[8257613; ON; 1571146539; 182; johnathan90; 3		 182; johnathan90; 1571146529; 3
-		//|181;franco196;1571146527;1
-		//|180;johnathan90;1571146517;3
-		//|179;stefanovianelli;1571146516;1
-		//|178;johnathan90;1571146507;3|177;franco196;1571146506;1|176;johnathan90;1571146497;3|175;franco196;1571146496;1|174;johnathan90;1571146486;3|173;franco196;1571146485;1]()
+
+	function check($arr, $newArr) {
+		$fini = array_unique(array_merge($arr, $newArr));
+	}
 	?>
 </body>
 </html>
