@@ -50,6 +50,12 @@ function insert_line($string)
 	query("INSERT INTO bidoo_data (id_utente, id_prodotto, n_puntate, tipo_puntata) VALUES (\"" . $id_utente . "\", \"" . $id_prodotto . "\", " . $n_puntate . ", " . $tipo_puntata . ")");
 }
 
+function insert_array($arr)
+{
+	for($i = 0; $i < count($arr); $i++)
+		insert_line($arr[$i]);	
+}
+
 function select_row($row_name)
 {
 	return query("SELECT " . $row_name . " FROM bidoo_data");
