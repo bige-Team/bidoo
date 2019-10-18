@@ -9,6 +9,8 @@
 		<button type="submit" name="btnOk">invia</button>
 	</form>
 	<?php
+	include_once "utils.php";
+
 	set_time_limit(0);
 	$links = [];
 	if(isset($_REQUEST['btnOk'])){
@@ -43,12 +45,18 @@
 		//	generaFile($s, $links[$i]);
 			//echo "\n".$links[$i];
 		//}
-		$i = 8;
+		$i = 14;
+		//Crea tavola nel database
+		create_table($links[$i]);
+
 		$auc = ['0;nessuno;1234567;1'];
 		do {
 			$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$ids[$i].'&LISTID=0');	//stringa del file php
 			$auc = generaArray($auc, $s, $links[$i]);
 			echo "<br>";
+			//Inserimento nel database
+			insert_array($links[$i], $auc);
+
 			print_r($auc);
 			sleep(10);
 		}while($auc != null);
