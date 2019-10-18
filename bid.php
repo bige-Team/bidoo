@@ -9,6 +9,7 @@
 		<button type="submit" name="btnOk">invia</button>
 	</form>
 	<?php
+	set_time_limit(0);
 	$links = [];
 	if(isset($_REQUEST['btnOk'])){
 		$str = file_get_contents("https://it.bidoo.com");
@@ -42,16 +43,18 @@
 		//	generaFile($s, $links[$i]);
 			//echo "\n".$links[$i];
 		//}
-		$i = 0;
+		$i = 8;
 		$auc = ['0;nessuno;1234567;1'];
 		do {
 			$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$ids[$i].'&LISTID=0');	//stringa del file php
-			$auc = generaArray($auc, $s, $ids[$i]);
+			$auc = generaArray($auc, $s, $links[$i]);
+			echo "<br>";
+			print_r($auc);
 			sleep(10);
 		}while($auc != null);
 
-		if($auc != null) {
-			echo "<h1>ssASTA CONCLUSA</h1>";
+		if($auc == null) {
+			echo "<h1>ASTA CONCLUSA</h1>";
 		}
 		
 	}
@@ -60,7 +63,7 @@
 	 *	(da finire)
 	 *	funzione che passato il link ed il nome restituisce un array che alla pos 0 ha il nome del prodotto, nelle altre posizioni contiene lo storico delle puntate
 	*/	
-	function generaArray($arr, $s, $id) {	//ANALIZZO IL FILE PHP
+	function generaArray($arr, $s, $name) {	//ANALIZZO IL FILE PHP
 		$pezzi = explode("|", $s);	//contiene tutte le info di ogni puntatore
 
 		//1571240953*[8266194;ON;1571241000;1;;,]()		asta che deve ancora iniziare
@@ -82,7 +85,7 @@
 				$pezzi[0] = $primo;	//array con le info delle puntate dell'asta
 				$pezzi[count($pezzi)-1] = substr($pezzi[count($pezzi)-1], 0, -3);
 
-				return array_unique(array_merge($arr, $pezzi));;
+				return array_unique(array_merge($pezzi, $arr));
 				//print_r($pezzi);
 				/*
 				$finale = implode("\n", $pezzi);	//stringa contenente i dati dell'asta
@@ -91,7 +94,7 @@
 				*/
 			}
 			else {
-				file_put_contents('data/'.$id, $arr);
+				file_put_contents('data/'.$name.'txt', $arr);
 				return null;
 			}
 		}
