@@ -8,6 +8,7 @@ tipo puntata 1-2 = manuale 3 = auto
 
 function connect()
 {
+	//"sql7.freemysqlhosting.net", "sql7308522", "bCQvsAUzMS", "sql7308522")
 	$link = new mysqli("sql7.freemysqlhosting.net", "sql7308522", "bCQvsAUzMS", "sql7308522");
 	if (mysqli_connect_errno()) 
 	{
