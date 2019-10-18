@@ -43,6 +43,7 @@
 			//echo "\n".$links[$i];
 		//}
 		$i = 0;
+		$auc = ['0;nessuno;1234567;1'];
 		do {
 			$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$ids[$i].'&LISTID=0');	//stringa del file php
 			$auc = generaArray($auc, $s, $ids[$i]);
@@ -50,7 +51,7 @@
 		}while($auc != null);
 
 		if($auc != null) {
-			echo "<h1>ssASTA CONCLUSA</h1>"
+			echo "<h1>ssASTA CONCLUSA</h1>";
 		}
 		
 	}
