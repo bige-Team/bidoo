@@ -26,6 +26,7 @@
 		}
 		for ($i=0; $i <count($temp) ; $i++) {
 			$temp2[$i] = explode("'", $temp1[$i][1]);
+			print_r($temp1[$i][1]);
 			$links[$i] = $temp2[$i][0];
 		}
 		//print_r($links);
@@ -49,13 +50,17 @@
 		//Crea tavola nel database
 		create_table($links[$i]);
 
-		$auc = ['0;nessuno;1234567;1'];
+		$auc = ["NULL;NULL;NULL;NULL"];
 		do {
 			$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$ids[$i].'&LISTID=0');	//stringa del file php
 			$auc = generaArray($auc, $s, $links[$i]);
 			echo "<br>";
 			//Inserimento nel database
-			insert_array($links[$i], $auc);
+			for($j = 0; $j < count($auc) - 1; $j++)
+			{
+				insert_line($links[$i], $auc[$j]);
+			}
+			//insert_array($links[$i], $auc);
 
 			print_r($auc);
 			sleep(10);

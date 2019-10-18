@@ -20,7 +20,7 @@ function connect()
 
 function create_table($name)
 {
-	query("CREATE TABLE " . $name . " (
+	query("CREATE TABLE if not exists " . $name . " (
 		id_utente VARCHAR(80),
 		time_stamp VARCHAR(20),
 		n_puntate INT,
@@ -62,16 +62,16 @@ function insert_line($table, $string)
 
 function insert_array($table, $arr)
 {
-	for($i = 0; $i < count($arr); $i++)
+	for($i = 0; $i < count($arr) - 1; $i++)
 		insert_line($table, $arr[$i]);	
 }
 
-function select_row($row_name)
+function select_row($table, $row_name)
 {
-	return query("SELECT " . $row_name . " FROM bidoo_data");
+	return query("SELECT " . $row_name . " FROM " . $table);
 }
 
-function create_html_table()
+function create_html_table($table)
 {
 	echo "<table>";
 	echo "<tr>";
@@ -80,10 +80,10 @@ function create_html_table()
 	echo "<td>N PUNTATE</td>";
 	echo "<td>TIPO PUNTATA</td>";
 	echo "</tr>";
-	$id_utente = select_row("id_utente");
-	$time_stamp = select_row("time_stamp");
-	$n_puntate = select_row("n_puntate");
-	$tipo_puntata = select_row("tipo_puntata");
+	$id_utente = select_row($table, "id_utente");
+	$time_stamp = select_row($table, "time_stamp");
+	$n_puntate = select_row($table, "n_puntate");
+	$tipo_puntata = select_row($table, "tipo_puntata");
 
 	if($id_utente->num_rows > 0 && $time_stamp->num_rows > 0 && $n_puntate->num_rows > 0 && $tipo_puntata->num_rows > 0)
 	{
