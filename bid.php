@@ -37,17 +37,20 @@
 
 		
 		//for ($i=0; $i <count($ids) ; $i++) { 
-			$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$ids[$i].'&LISTID=0');	//stringa del file php
+			
 			
 		//	generaFile($s, $links[$i]);
 			//echo "\n".$links[$i];
 		//}
-		
-
-		$auc = generaArray($auc, $s, $ids[0]);
-		if($auc != null) {
+		$i = 0;
+		do {
+			$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$ids[$i].'&LISTID=0');	//stringa del file php
+			$auc = generaArray($auc, $s, $ids[$i]);
 			sleep(10);
-			$auc = generaArray($auc, $s, $ids[0]);
+		}while($auc != null);
+
+		if($auc != null) {
+			echo "<h1>ssASTA CONCLUSA</h1>"
 		}
 		
 	}
@@ -60,7 +63,7 @@
 		$pezzi = explode("|", $s);	//contiene tutte le info di ogni puntatore
 
 		//1571240953*[8266194;ON;1571241000;1;;,]()		asta che deve ancora iniziare
-		if(count($pezzi) > 2) {	//se non c'è almeno una puntata allora l'asta deve ancora iniziare e non salvo nulla
+		if(count($pezzi) > 1) {	//se non c'è almeno una puntata allora l'asta deve ancora iniziare e non salvo nulla
 			$primoPezzo = explode(",", $pezzi[0]);
 			//1 e 2 = manuale, 3 = auto
 			
