@@ -8,6 +8,7 @@ tipo puntata 1-2 = manuale 3 = auto
 
 function connect()
 {
+	//"sql7.freemysqlhosting.net", "sql7308522", "bCQvsAUzMS", "sql7308522")
 	$link = new mysqli("sql7.freemysqlhosting.net", "sql7308522", "bCQvsAUzMS", "sql7308522");
 	if (mysqli_connect_errno()) 
 	{
@@ -47,6 +48,12 @@ function insert_line($string)
 	$id_prodotto = $parts[2];
 	$tipo_puntata = $parts[3];
 	query("INSERT INTO bidoo_data (id_utente, id_prodotto, n_puntate, tipo_puntata) VALUES (\"" . $id_utente . "\", \"" . $id_prodotto . "\", " . $n_puntate . ", " . $tipo_puntata . ")");
+}
+
+function insert_array($arr)
+{
+	for($i = 0; $i < count($arr); $i++)
+		insert_line($arr[$i]);	
 }
 
 function select_row($row_name)
