@@ -11,7 +11,7 @@
 	<?php
 	include_once "utils.php";
 
-	set_time_limit(0);
+	set_time_limit(0);	//rimuove il tempo massimo per l'esecuzione di uno script php
 	$links = [];
 	if(isset($_REQUEST['btnOk'])){
 		$str = file_get_contents("https://it.bidoo.com");
@@ -45,9 +45,9 @@
 		//	generaFile($s, $links[$i]);
 			//echo "\n".$links[$i];
 		//}
-		$i = 14;
+		$i = 4;
 		//Crea tavola nel database
-		create_table($links[$i]);
+		//create_table($links[$i]);
 
 		$auc = ['0;nessuno;1234567;1'];
 		do {
@@ -55,8 +55,9 @@
 			$auc = generaArray($auc, $s, $links[$i]);
 			echo "<br>";
 			//Inserimento nel database
-			insert_array($links[$i], $auc);
+			//insert_array($links[$i], $auc);
 
+			echo $links[$i];
 			print_r($auc);
 			sleep(10);
 		}while($auc != null);
@@ -101,7 +102,9 @@
 				file_put_contents('data/'.$name.'.txt', $finale, FILE_APPEND | LOCK_EX);
 				*/
 			}
+			//asta finita, posso inviare i dati al database
 			else {
+				array_pop($arr);	//rimuove l'ultimo elemento dell'array (quello in più)
 				file_put_contents('data/'.$name.'txt', $arr);
 				return null;
 			}
