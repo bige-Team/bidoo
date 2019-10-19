@@ -24,15 +24,14 @@
 		for ($i=0; $i <count($temp) ; $i++) {
 			$temp1[$i] = explode("href='auction.php?a=", $temp[$i]);
 		}
-		for ($i=0; $i <count($temp) ; $i++) {
+
+		for ($i=0; $i <count($temp); $i++) {
 			$temp2[$i] = explode("'", $temp1[$i][1]);
-			print_r($temp1[$i][1]);
 			$links[$i] = $temp2[$i][0];
 		}
-		//print_r($links);
-		//echo "<br><br>";
+
 		//genera l'array con gli id dei prodotti => ids
-		for ($i=0; $i <count($temp) ; $i++) {
+		for ($i=0; $i <count($temp); $i++) {
 			$temp3 = explode("_", $links[$i]);
 			$ids[$i] = $temp3[count($temp3)-1];
 		}
@@ -46,7 +45,7 @@
 		//	generaFile($s, $links[$i]);
 			//echo "\n".$links[$i];
 		//}
-		$i = 14;
+		$i = 12;
 		//Crea tavola nel database
 		create_table($links[$i]);
 
