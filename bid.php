@@ -55,6 +55,9 @@
 			$auc = generaArray($auc, $s, $links[$i]);
 			echo "<br>";
 			//Inserimento nel database
+			foreach ($auc as $key => $value) {
+				insert_line($links[$i], $value);
+			}
 			/*
 			for($j = 0; $j < count($auc) - 1; $j++)
 			{
