@@ -47,7 +47,7 @@
 		//}
 		$i = 12;
 		//Crea tavola nel database
-		//create_table($links[$i]);
+		create_table($links[$i]);
 
 		$auc = ["NULL;NULL;NULL;NULL"];
 		do {
