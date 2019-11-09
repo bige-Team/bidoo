@@ -1,20 +1,22 @@
+
 <?php
 
-$var = 'one';
-$pid = pcntl_fork();
+class workerThread extends Thread {
+public function __construct($i){
+  $this->i=$i;
+}
 
-if($pid === -1)
-{
-	exit();
-}elseif ($pid === 0)
-{
-	echo $var;
-	$var = 'two';
-}else{
-	echo $var;
-	$var = 'three';
+public function run(){
+  while(true){
+   echo $this->i;
+   sleep(1);
+  }
+}
+}
 
-	pcntl_wait($status);
+for($i=0;$i<50;$i++){
+$workers[$i]=new workerThread($i);
+$workers[$i]->start();
 }
 
 ?>
