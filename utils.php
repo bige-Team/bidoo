@@ -1,15 +1,8 @@
 <?php
-/*
-puntate usate
-username
-id prodotto
-tipo puntata 1-2 = manuale 3 = auto
-*/
-
 function connect()
 {
 	//"sql7.freemysqlhosting.net", "sql7308522", "bCQvsAUzMS", "sql7308522")
-	$link = new mysqli("sql7.freemysqlhosting.net", "sql7308522", "bCQvsAUzMS", "sql7308522");
+	$link = new mysqli("localhost", "root", "Rt9du2pg", "bidoo");
 	if (mysqli_connect_errno()) 
 	{
 		printf("linkect failed: %s\n", mysqli_connect_error());
@@ -17,15 +10,20 @@ function connect()
 	}
 	return $link;
 }
-
+//time_stamp -> INT tipo_puntata -> char(1) id_utente -> VARCHAR(15)
 function create_table($name)
 {
 	query("CREATE TABLE if not exists " . $name . " (
 		id_utente VARCHAR(80),
 		time_stamp VARCHAR(20),
-		n_puntate INT,
+		n_puntate INT PRIMARY KEY,
 		tipo_puntata INT
 	);");
+
+	$l = new mysqli("localhost", "root", "Rt9du2pg", "bidoo_stats");
+	$l->query("INSERT INTO auction_tracking (name, analized) VALUES ('". $name . "', 0)");	
+	$l->close();
+	
 }
 
 function query($query)
@@ -57,7 +55,7 @@ function insert_line($table, $string)
 	$id_utente = $parts[1];
 	$time_stamp = $parts[2];
 	$tipo_puntata = $parts[3];
-	query("INSERT INTO ". $table . "(id_utente, time_stamp, n_puntate, tipo_puntata) VALUES (\"" . $id_utente . "\", \"" . $time_stamp . "\", " . $n_puntate . ", " . $tipo_puntata . ")");
+	query("INSERT INTO ". $table . "(id_utente, time_stamp, n_puntate, tipo_puntata) VALUES ('" . $id_utente . "'",  . $time_stamp . ", " . $n_puntate . ", '" . $tipo_puntata . "')");
 }
 
 function insert_array($table, $arr)
@@ -69,6 +67,11 @@ function insert_array($table, $arr)
 function select_row($table, $row_name)
 {
 	return query("SELECT " . $row_name . " FROM " . $table);
+}
+
+function last_10($table)
+{
+	return query("SELECT * FROM " . $table . " ORDER BY n_puntate DESC LIMIT 10");
 }
 
 function create_html_table($table)
@@ -109,6 +112,80 @@ function empty_table()
 {
 	query("TRUNCATE TABLE bidoo_data");
 }
+
+function get_table_names()
+{
+	$res = query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_SCHEMA='bidoo'");
+	$i = 0;
+	$names = [];
+	if ($res->num_rows > 0) 
+	    while($row = $res->fetch_assoc()) 
+	    {
+	    	$names[$i] = $row['TABLE_NAME'];
+	    	$i++;
+	    }
+	return $names;
+}
+
+function analize_database($table)
+{
+	$id_utenti = [];
+	echo $table . "<br>";
+	$res = query("SELECT id_utente, time_stamp FROM " . $table . " ORDER BY id_utente, time_stamp");
+	
+	foreach ($res->fetch_all() as $key => $value)
+	{
+		if(!isset($id_utenti[$value[0]]))
+			$id_utenti[$value[0]]['n_puntate'] = 1; 
+		else
+			$id_utenti[$value[0]]['n_puntate'] += 1;
+
+		if(!isset($id_utenti[$value[0]]['time_stamp']))
+			$id_utenti[$value[0]]['time_stamp'] = $value[1];
+		else
+			$id_utenti[$value[0]]['time_stamp'] = ($id_utenti[$value[0]]['time_stamp']-$value[1]);
+	}
+
+	echo "<table>";
+	echo "<tr>";
+	echo "<td>UTENTE</td>";
+	echo "<td>PUNTATE USATE</td>";
+	echo "<td>TEMPO PUNTATA MEDIO</td>";
+	echo "</tr>";
+
+	foreach ($id_utenti as $key => $value) 
+	{
+		$avg = $id_utenti[$key]['time_stamp']/$id_utenti[$key]['n_puntate'];
+		echo "<tr>";
+		echo "<td>" . $key . "</td>";
+		echo "<td>" . $value['n_puntate'] . "</td>";
+		echo "<td>" . $avg . "</td>";
+		echo "</tr>";
+	}
+
+	echo "</table>";
+
+	print_r($id_utenti);
+	//DIFFERENZA TEMPO
+	/*
+	$res = query("SELECT id_utente, time_stamp FROM " . $table . " ORDER BY time_stamp ASC");
+	$time = [];
+	$i = 0;
+	foreach ($res->fetch_all() as $key => $value)
+	{
+		$time[$i++] = $value[1];
+	}
+	print_r($time);
+	echo "<br>";
+	for ($i=count($time)-1; $i >= 0; $i--)
+	{
+		if($i > 0)
+			$time[$i] = $time[$i] - $time[$i-1];
+	}
+	print_r($time);
+	*/
+}
+
 
 
 
