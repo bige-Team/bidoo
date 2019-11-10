@@ -4,6 +4,13 @@
 set_time_limit(0);
 //start();
 $t1 = microtime(true);
+
+$ids = array();
+$toRemove = array();
+
+$ids = getBids();
+print_r($ids);
+/*
 for($i = 0; $i < 5; $i++)
 {	
 	$pid = pcntl_fork();
@@ -17,7 +24,7 @@ for($i = 0; $i < 5; $i++)
 
 while(pcntl_waitpid(0, $status) != -1);
 echo "time: " . (microtime(true)-$t1)*1000 . "\n";
-
+*/
 function execute_code($pc)
 {
 	$t1 = microtime(true);
@@ -37,5 +44,28 @@ function execute_code($pc)
 	$file = file_get_contents($s);
 	echo "[$pc]: Done " . (microtime(true)-$t1)*1000 . "\n";
 }
+
+//-------------------------------------------------------------------
+function getBids() {
+		$str = file_get_contents("https://it.bidoo.com");
+
+		$temp = explode("pic_prd", $str);
+		for ($i=0; $i <count($temp) ; $i++) {
+			$start = strlen($temp[$i])-80;
+			$temp[$i] = substr($temp[$i], $start);
+
+			$temp1[$i] = explode("href='auction.php?a=", $temp[$i]);
+
+			$temp2[$i] = explode("'", $temp1[$i][1]);
+			$links[$i] = $temp2[$i][0];
+
+			$temp3 = explode("_", $links[$i]);
+			$ids[$temp3[count($temp3)-1]] = $links[$i];
+			
+		}
+		array_pop($ids);	//rimuovo l'ultimo elemento che è vuoto
+
+		return $ids;
+	}
 
 ?>
