@@ -1,9 +1,8 @@
 <?php
 function connect()
 {
-	$link = new mysqli("sql7.freemysqlhosting.net", "sql7308522", "bCQvsAUzMS", "sql7308522");
-	//$link = new mysqli("localhost", "root", "Rt9du2pg", "bidoo");
-	//$link = new mysqli("localhost", "root", "", "bidoo");
+	//"sql7.freemysqlhosting.net", "sql7308522", "bCQvsAUzMS", "sql7308522")
+	$link = new mysqli("localhost", "root", "Rt9du2pg", "bidoo");
 	if (mysqli_connect_errno()) 
 	{
 		printf("linkect failed: %s\n", mysqli_connect_error());
@@ -15,14 +14,16 @@ function connect()
 function create_table($name)
 {
 	query("CREATE TABLE if not exists " . $name . " (
-		id_utente VARCHAR(15),
-		time_stamp INT,
+		id_utente VARCHAR(80),
+		time_stamp VARCHAR(20),
 		n_puntate INT PRIMARY KEY,
-		tipo_puntata char(1)
+		tipo_puntata INT
 	);");
-	//$l = new mysqli("localhost", "root", "Rt9du2pg", "bidoo_stats");
-	//$l->query("INSERT INTO auction_tracking (name) VALUES ($name)");
-	//$l->close();
+
+	$l = new mysqli("localhost", "root", "Rt9du2pg", "bidoo_stats");
+	$l->query("INSERT INTO auction_tracking (name, analized) VALUES ('". $name . "', 0)");	
+	$l->close();
+	
 }
 
 function query($query)
@@ -31,13 +32,6 @@ function query($query)
 	$result = $link->query($query);
 	$link->close();
 	return $result;
-}
-
-function delete_line($table, $string) {
-	query("DELETE FROM " . $table . " WHERE name = \"".$string."\"");
-}
-function insert_elem($table, $string) {
-	query("INSERT INTO " . $table . " VALUES (\"".$string."\")");
 }
 
 function insert_file($table, $file)
@@ -50,7 +44,7 @@ function insert_file($table, $file)
 		$id_utente = $parts[1];
 		$time_stamp = $parts[2];
 		$tipo_puntata = $parts[3];
-		query("INSERT INTO " . $table . " VALUES ('" .$id_utente. "', " .$time_stamp. ", " .$n_puntate. ", '" .$tipo_puntata. "')");
+		query("INSERT INTO " . $table . "(id_utente, time_stamp, n_puntate, tipo_puntata) VALUES (\"" . $id_utente . "\", \"" . $time_stamp . "\", " . $n_puntate . ", " . $tipo_puntata . ")");
 	}
 }
 
@@ -61,7 +55,7 @@ function insert_line($table, $string)
 	$id_utente = $parts[1];
 	$time_stamp = $parts[2];
 	$tipo_puntata = $parts[3];
-	query("INSERT INTO " . $table . "(id_utente, time_stamp, n_puntate, tipo_puntata) VALUES (\"" .$id_utente. "\", " .$time_stamp. ", " .$n_puntate. ", \"" .$tipo_puntata. "\")");
+	query("INSERT INTO ". $table . "(id_utente, time_stamp, n_puntate, tipo_puntata) VALUES ('" . $id_utente . "'",  . $time_stamp . ", " . $n_puntate . ", '" . $tipo_puntata . "')");
 }
 
 function insert_array($table, $arr)
