@@ -1,7 +1,7 @@
 <?php
 include_once "utils.php";
-
-
+print_r(get_table_names());
+/*
 	$table_names = get_table_names();
 	$link = con();
 	$q = "";
@@ -17,5 +17,6 @@ function con()
 {
 	$link = new mysqli("localhost", "root", "Rt9du2pg", "bidoo_stats");
 	return $link;
-}
+}*/
+
 ?>

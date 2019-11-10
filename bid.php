@@ -1,16 +1,50 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>bid</title>
-</head>
-<body>
-
-	<form action="" method="POST">
-		<button type="submit" name="btnOk">INIZIO</button>
-		<button type="submit" name="btn1">STOP</button>
-	</form>
 	<?php
-	include_once('utils1.php');
+	// include_once('utils.php');
+
+	function start()
+	{
+		set_time_limit(0);
+		$ids = array();
+		$toRemove = array();
+
+		$ids = getBids();	//metodo che genera l'array con le aste da bidoo
+/*
+		foreach ($ids as $key => $value) {
+			insert_elem('rimuovi', $value);
+		}
+*/
+		//----------------------------------------------------------
+		//ids[] contiene: id => nome
+		do {
+			$hour = date("H");
+			$min = date("i");
+
+			if(!($hour >= 0 && $hour < 12)) {	//se non siamo nell'orario di stop
+
+				foreach ($ids as $key => $value) {
+					$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$key.'&LISTID=0');	//stringa del file php
+					$new = generaArray($s, $key, $ids);
+
+					if(!is_null($new)){		//se ci sono aggiornamenti da fare
+						create_table($value);
+						insert_array($value, $new);
+					}
+				}
+
+				foreach ($toRemove as $value) {
+					echo "rimossa l'asta " . $ids[$value];
+					unset($ids[$value]);	//rimuove l'asta dall'array delle aste
+				}
+				$toRemove = [];	//resetto l'array con gli elementi da rimuovere
+			}
+		}while(true/*!isset($_REQUEST['STOP'])*/);
+/*
+		if(isset($_REQUEST['STOP'])) {
+			echo "<h1>ASTA CONCLUSA</h1>";
+		}
+		*/
+	}
+	/*
 	set_time_limit(0);	//rimuove il tempo massimo per l'esecuzione di uno script php
 	$ids = array();
 	$toRemove = array();
@@ -54,7 +88,7 @@
 		}
 		
 	}
-
+*/
 	function getBids() {
 		$str = file_get_contents("https://it.bidoo.com");
 
@@ -166,33 +200,3 @@
 		return null;
 	}
 ?>
-</body>
-</html>
-
-<!--
-SELECT COUNT(n_puntate) FROM 250_puntate_8411549
-
-SELECT COUNT(n_puntate) AS prese, (
-	SELECT n_puntate
-	FROM kit_airpods_8436771
-	ORDER BY n_puntate desc
-	LIMIT 1
-)-(
-	SELECT n_puntate
-	FROM kit_airpods_8436771
-	ORDER BY n_puntate
-	LIMIT 1
-) - COUNT(n_puntate) + 1 as perdita, (
-	SELECT n_puntate
-	FROM kit_airpods_8436771
-	ORDER BY n_puntate desc
-	LIMIT 1
-)-(
-	SELECT n_puntate
-	FROM kit_airpods_8436771
-	ORDER BY n_puntate
-	LIMIT 1
-) + 1 as totale
-FROM kit_airpods_8436771
-
--->
