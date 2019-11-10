@@ -1,6 +1,6 @@
 <?php
 //include "utils.php";
-//include "bid.php";
+include_once "bid_utils.php";
 set_time_limit(0);
 //start();
 $t1 = microtime(true);
