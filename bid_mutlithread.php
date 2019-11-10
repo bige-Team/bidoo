@@ -1,7 +1,7 @@
 <?php
 //include "utils.php";
 //include "bid.php";
-
+set_time_limit(0);
 //start();
 $t1 = microtime(true);
 for($i = 0; $i < 5; $i++)
