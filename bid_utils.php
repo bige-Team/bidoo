@@ -11,14 +11,15 @@ function get_auctions()
 		$temp[$i] = substr($temp[$i], $start);
 
 		$temp1[$i] = explode("href='auction.php?a=", $temp[$i]);
-		
-		$temp2[$i] = explode("'", $temp1[$i][1]);
-		$links[$i] = $temp2[$i][0];
-		
-		$temp3 = explode("_", $links[$i]);
-		$ids[$temp3[count($temp3)-1]] = $links[$i];
+		if($i != count($temp)-1)
+		{
+			$temp2[$i] = explode("'", $temp1[$i][1]);
+			$links[$i] = $temp2[$i][0];
+			$temp3 = explode("_", $links[$i]);
+			$ids[$temp3[count($temp3)-1]] = $links[$i];
+		}
 	}
-	array_pop($ids);	//rimuovo l'ultimo elemento che è vuoto
+	//array_pop($ids);	//rimuovo l'ultimo elemento che è vuoto
 	return $ids;
 }
 
@@ -67,5 +68,16 @@ function array_to_string($array, $separator)
 function string_to_array($string, $separator)
 {
 	return explode($separator, $string);
+}
+
+function auction_check_status($auction)
+{
+	$s = file_get_contents("https://it.bidoo.com/data.php?ALL=$auction&LISTID=0");
+	if(strpos($s, 'ON') == true)
+		return 1;
+	elseif(strpos($s, 'OFF') == true)
+		return 0;
+	else 
+		return null;
 }
 ?>

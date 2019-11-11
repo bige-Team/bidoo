@@ -20,9 +20,6 @@ function create_table($name)
 		n_puntate INT PRIMARY KEY,
 		tipo_puntata char(1)
 	);");
-	$l = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
-	$l->query("INSERT INTO auction_tracking (name) VALUES ($name)");
-	$l->close();
 }
 
 function query($query)
