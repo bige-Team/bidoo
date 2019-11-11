@@ -2,25 +2,56 @@
 include_once "bid_utils.php";
 include_once "mysql_utils.php";
 set_time_limit(0);
+//Creating shm segment
+$updating_db_lock = 0;
+$shm_key = ftok(__FILE__, 'a');//Generete a hex value
+$shm_id = shmop_open($shm_key, "c", 0644, 1);//Create the shm space
+shmop_write($shm_id, $updating_db_lock, 0);//Write in
 
-//Get auctions
-$auctions = get_auctions();
 
-$l = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
-foreach ($auctions as $key => $value) 
+$pid = pcntl_fork();
+if($pid == -1)
+	die("Error forking...\n");
+elseif($pid == 0) #Child code
 {
-	//$l->query("TRUNCATE TABLE auction_traking");
-	$l->query("INSERT INTO auction_tracking (name) VALUES ('$value')");
+	child_loop();
 }
-//print_r($auctions);
-foreach ($auctions as $key => $value) {
-	//echo "$value status: " . auction_check_status($value) . "\n";
-	$s = file_get_contents("https://it.bidoo.com/data.php?ALL=$value&LISTID=0");
-	//echo "$value -> " . strpos($s, 'ON') . "\n";
-	echo $s . "\n";
+else #Parent code
+{
+	parent_loop();
 }
-$l->close();
 
+function parent_loop()
+{
+	shmop_write($shm_id, 1, 0);//Locking
+	$auctions = get_and_insert_auctions();
+	shmop_write($shm_id, 0, 0);//Unlocking
+
+	while(true)
+	{
+		sleep(300);//5 Minutes
+		check_auctions_status($auctions);#Check using database?
+		shmop_write($shm_id, 1, 0);//Locking
+		$auctions = get_and_insert_auctions();
+		shmop_write($shm_id, 0, 0);//Unlocking
+	}
+}
+
+function child_loop()
+{
+	$shm_key = ftok(__FILE__, 'a');
+	$shm_id = shmop_open(shm_key, "w", 0, 0);
+	$updating_db_lock = shmop_read($shm_id, 0, 1);
+
+	while($updating_db_lock == 1);
+
+	$max_auctions = 10;
+	$l = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
+		$res = $l->query("SELECT a.name FROM auction_traking as a WHERE a.assigned=0 ORDER BY a.name LIMIT $max_auctions");
+		print_r($res->fetch_all());
+	$l->close();
+	shmop_close($shm_id);
+}
 //print_r($auctions);
 /*
 #CREATING SHARED MEMORY SEGMENT

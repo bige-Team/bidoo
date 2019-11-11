@@ -1,5 +1,8 @@
 <?php
-//old getIds()
+/*
+* Get the auctions from it.bidoo.com
+* $ids[n_auction] => [auction_name] 
+*/
 function get_auctions() 
 {
 	$str = file_get_contents("https://it.bidoo.com");
@@ -54,6 +57,9 @@ function loop(&$ids, &$toRemove)
 	}while(true/*!isset($_REQUEST['STOP'])*/);
 }
 
+/*
+* Converts an array into a string using $separator
+*/
 function array_to_string($array, $separator)
 {
 	$s = "";
@@ -65,19 +71,41 @@ function array_to_string($array, $separator)
 	return $s;
 }
 
+/*
+* Converts a string to an array using $separator
+*/
 function string_to_array($string, $separator)
 {
 	return explode($separator, $string);
 }
 
-function auction_check_status($auction)
+/*
+* Checks if the auction is terminated, if so update the table auction_tracking
+*/
+function check_auctions_status($auctions)
 {
-	$s = file_get_contents("https://it.bidoo.com/data.php?ALL=$auction&LISTID=0");
-	if(strpos($s, 'ON') == true)
-		return 1;
-	elseif(strpos($s, 'OFF') == true)
-		return 0;
-	else 
-		return null;
+	foreach ($auctions as $key => $value) 
+	{
+		$s = file_get_contents("https://it.bidoo.com/data.php?ALL=$key&LISTID=0");
+		if(strpos($s, 'OFF') == true)
+		{
+			$l = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
+			$l->query("UPDATE auction_tracking as a SET a.terminated = 1 WHERE a.name='$value'");
+			$l->close();
+		}
+	}
+}
+
+/*
+* Get and insert auctions into the table bidoo_stats
+*/
+function get_and_insert_auctions()
+{
+	$auctions = get_auctions();
+	$l = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
+	foreach ($auctions as $key => $value) 
+		$l->query("INSERT INTO auction_tracking (name) VALUES ('$value')");
+	$l->close();
+	return $auctions;
 }
 ?>
