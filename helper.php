@@ -1,22 +1,11 @@
 <?php
-include_once "utils.php";
-print_r(get_table_names());
-/*
-	$table_names = get_table_names();
-	$link = con();
-	$q = "";
-	for ($i=0; $i < count($table_names); $i++) 
-	{
-		$q .= "INSERT INTO auction_tracking (name) VALUES ('$table_names[$i]');";
-	}
-	echo $q;
-	$link->close();
-	
+declare(ticks = 1);
+pcntl_signal(SIGINT, "end_of_all");
+sleep(100);	
 
-function con()
+function end_of_all($sig)
 {
-	$link = new mysqli("localhost", "root", "Rt9du2pg", "bidoo_stats");
-	return $link;
-}*/
-
+	echo 'Exiting with signal: ' . $sig;
+  exit(1);
+}
 ?>

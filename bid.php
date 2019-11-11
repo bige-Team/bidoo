@@ -19,19 +19,23 @@
 			$hour = date("H");
 			$min = date("i");
 
-			if(!($hour >= 0 && $hour < 12)) {	//se non siamo nell'orario di stop
+			if(!($hour >= 0 && $hour < 12)) //se non siamo nell'orario di stop
+			{	
 
-				foreach ($ids as $key => $value) {
+				foreach ($ids as $key => $value) 
+				{
 					$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$key.'&LISTID=0');	//stringa del file php
 					$new = generaArray($s, $key, $ids);
 
-					if(!is_null($new)){		//se ci sono aggiornamenti da fare
+					if(!is_null($new))
+					{		//se ci sono aggiornamenti da fare
 						create_table($value);
 						insert_array($value, $new);
 					}
 				}
 
-				foreach ($toRemove as $value) {
+				foreach ($toRemove as $value)
+				{
 					echo "rimossa l'asta " . $ids[$value];
 					unset($ids[$value]);	//rimuove l'asta dall'array delle aste
 				}
@@ -116,6 +120,7 @@
 	 *	
 	 *	@return array[] 
 	*/	
+	//link asta, nome asta, array aste
 	function generaArray($s, $key, $ids) {	//ANALIZZO IL FILE PHP
 		$pezzi = explode("|", $s);
 		$arr = scaricaArray($ids[$key]);	//prendo dal database le ultime 10 puntate dell'asta
@@ -172,6 +177,7 @@
 			insert_line($ids[$key], $last);
 			delete_line('rimuovi', $ids[$key]);
 			$GLOBALS['toRemove'][] = $key;	//aggiungo all'array degli elementi da rimuovere l'id dell'asta finita (la key)
+			#TODO: aggiornare il database
 
 			return null;
 		}

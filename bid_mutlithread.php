@@ -1,38 +1,33 @@
 <?php
-//include "utils.php";
 include_once "bid_utils.php";
+include_once "mysql_utils.php";
 set_time_limit(0);
-//start();
 
-$auctions = array();
-$toRemove = array();
-
+//Get auctions
 $auctions = get_auctions();
-print_r($auctions);
 
+
+/*
 #CREATING SHARED MEMORY SEGMENT
-$a = "";
-foreach ($auctions as $key => $value) 
-{
-		$a .= $value . "|";
-}
-$a = substr($a, 0, -1);//Remove last pipe
-$shm_key = ftok(__FILE__, 'g');
-$shm_id = shmop_open($shm_key, "c", 0644, strlen($a));
-shmop_write($shm_id, $a, 0);
+$a = array_to_string($auctions, '|');
+$shm_key = ftok(__FILE__, 'g');//Generete a hex value
+$shm_id = shmop_open($shm_key, "c", 0644, strlen($a));//Create the shm space
+shmop_write($shm_id, $a, 0);//Write in the string
 
-#TEST
-//$start = $arr_size - strlen(array_pop($auctions))*8;
-//echo "start: " . $start . "\n";
-$size = shmop_size($shm_id);
-$count = strlen(array_pop($auctions));
-$start = $size-1-strlen(array_pop($auctions));
-echo "size: $size\nstart: $start\ncount: $count\n";
-$data = shmop_read($shm_id, 0, $size);
-echo "data->" . $data . "\n";
-#TEST
+//$data = shmop_read($shm_id, 0, shmop_size($shm_id));
 
 shmop_delete($shm_id);
+*/
+#PARENT CODE
+//TODO: get the lock on the array
+$tmp_auctions = get_auctions();
+$new_auctions = array_diff($auctions, $tmp_auctions);
+//TODO: give these auction to the childrens
+#PARENT CODE
+
+#CHILD CODE
+//TODO: get lock on the shm containing the auctions to start monitoring
+#CHILD CODE
 
 /*
 for($i = 0; $i < 5; $i++)
