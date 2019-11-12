@@ -25,54 +25,77 @@ parent_loop($shm_id);
 
 function parent_loop($shm_id)
 {
-	echo "Parent -> locking\n";
+	//echo "Parent -> locking\n";
 	shmop_write($shm_id, 1, 0);//Locking
 	$auctions = get_and_insert_auctions();
 	shmop_write($shm_id, 0, 0);//Unlocking
-	echo "Parent -> unlocking\n";
+	//echo "Parent -> unlocking\n";
 
 	while(true)
 	{
 		sleep(300);//5 Minutes
 		check_auctions_status($auctions);#Check using database?
-		echo "Parent -> locking\n";
+		//echo "Parent -> locking\n";
 		shmop_write($shm_id, 1, 0);//Locking
 		$auctions = get_and_insert_auctions();
 		shmop_write($shm_id, 0, 0);//Unlocking
-		echo "Parent -> unlocking\n";
+		//echo "Parent -> unlocking\n";
 	}
 }
 
 function child_loop()
 {
 	usleep(rand(100000,500000));
+	echo "Started thread " . getmypid() . "\n";
 	$max_auctions = 10;
 	$auctions_count = 0;
 	while(true)
 	{
-		$shm_key = ftok(__FILE__, 'b');
-		$shm_id = shmop_open($shm_key, "w", 0, 0);
-		$updating_db_lock = shmop_read($shm_id, 0, 1);
-		//echo "Child " . getmypid() . "-> waiting...\n";
-		while($updating_db_lock != 0)
+		if($auctions_count < $max_auctions)
 		{
+			//Read if the database is being updated
+			$shm_key = ftok(__FILE__, 'b');
+			$shm_id = shmop_open($shm_key, "w", 0, 0);
 			$updating_db_lock = shmop_read($shm_id, 0, 1);
-			//echo "Child " . getmypid() . " -> locked\n";
-			usleep(200000);#200 ms
-		}
-		//echo "Child ". getmypid() . " -> done waiting\n";
+			//If it is, just wait in the loop
+			while($updating_db_lock != 0)
+			{
+				usleep(200000);#200 ms
+				$updating_db_lock = shmop_read($shm_id, 0, 1);
+				//echo "Child " . getmypid() . " -> locked\n";
+			}
 
-		$l = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
-		$res = $l->query("SELECT a.name FROM auction_tracking as a WHERE a.assigned=0 AND a.terminated=0 ORDER BY a.name LIMIT $max_auctions");
-		$res = $res->fetch_all();
-		for($i = 0; $i < count($res); $i++)
+			$auction_needed = $max_auctions - $auctions_count;
+			$l = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
+			$res = $l->query("SELECT a.name, a.id FROM auction_tracking as a WHERE a.assigned=0 AND a.terminated=0 ORDER BY a.name LIMIT $auction_needed");
+			$res = $res->fetch_all();
+			if(count($res) == 0)#No auctions aviable
+			{
+				echo "[" . getmypid() . "]: No free auctions, waiting...\n";
+				$l->close();
+				sleep(30);
+			}
+			else#Some auctions aviable
+			{
+				for($i = 0; $i < count($res); $i++)
+				{
+					$current = $res[$i][0];
+					$l->query("UPDATE auction_tracking SET auction_tracking.assigned=1 WHERE auction_tracking.name='$current'");
+				}
+				$l->close();
+				for($i = 0; $i < count($res); $i++)
+					create_table($current);
+
+				$auctions_count += count($res);
+				echo "[" . getmypid() . "]: Starting analizing\n";
+				analize_auctions($res);
+			}
+		}
+		else
 		{
-			$current = $res[$i][0];
-			$l->query("UPDATE auction_tracking SET auction_tracking.assigned=1 WHERE auction_tracking.name='$current'");
-		}
-		$auctions_count = count($res);
 
-		$l->close();
+		}
+		
 	}
 	
 	shmop_close($shm_id);

@@ -29,7 +29,7 @@
 
 					if(!is_null($new))
 					{		//se ci sono aggiornamenti da fare
-						create_table($value);
+						create_table($value);#DONE
 						insert_array($value, $new);
 					}
 				}
