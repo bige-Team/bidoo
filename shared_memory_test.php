@@ -32,7 +32,7 @@ else //Codice del processso padre
 		}
 		else
 			echo "[" .getmypid() . "]: Array locked\n";
-		usleep(10000);
+		usleep(100000);
 	}
 }
 
@@ -51,7 +51,7 @@ function array_updater(&$array)
 	for ($i=0; $i < 5; $i++) 
 	{ 
 		//echo "[" . getmypid() . "]: Inserting $i\n";
-		usleep(10000);//1 sec
+		usleep(100000);//1 sec
 	}
 	#SEZIONE CRITICA
 	echo "[" . getmypid() . "]: Unlocking array\n";
@@ -59,7 +59,7 @@ function array_updater(&$array)
 	shmop_write($shm_id, 0, 0);//write 'false' in the shm
 
 	echo "[" . getmypid() . "]: Sleeping...\n";
-	usleep(15000);
+	usleep(150000);
 }
 ?>
 

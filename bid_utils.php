@@ -190,7 +190,7 @@ function generaArray($s, $key, $name, $ids)
 function scaricaArray($name) 
 {
 	$arr = last_10($name);	//prendo i dati delle ultime 10 puntate dal database
-	
+	$arr1 = array();
 	if($arr != null)
 	{
 		$arr = $arr->fetch_all();	//trasformo i dati per poterli leggere in un array di array
@@ -206,6 +206,6 @@ function scaricaArray($name)
 		}
 		return $arr1;
 	}
-	return null;
+	return nulla;
 }
 ?>

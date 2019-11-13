@@ -44,7 +44,6 @@ function parent_loop($shm_id)
 		shmop_write($shm_id, 1, 0);//Locking
 		$auctions = get_and_insert_auctions();
 		shmop_write($shm_id, 0, 0);//Unlocking
-		
 	}
 }
 
