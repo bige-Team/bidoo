@@ -1,4 +1,5 @@
 <?php
+include_once "mysql_utils";
 /*
 * Get the auctions from it.bidoo.com
 * $ids[n_auction] => [auction_name] 
@@ -101,12 +102,19 @@ function check_auctions_status($auctions)
 */
 function get_and_insert_auctions()
 {
-	$auctions = get_auctions();
-	$l = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
-	foreach ($auctions as $key => $value) 
-		$l->query("INSERT INTO auction_tracking VALUES ('$value', $key, 0, 0, 0)");
-	$l->close();
-	return $auctions;
+	$hour = date("H");
+	if(!($hour >= 0 && $hour < 12))#Auctions running
+	{
+		$auctions = get_auctions();
+		$l = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
+		foreach ($auctions as $key => $value) 
+			$l->query("INSERT INTO auction_tracking VALUES ('$value', $key, 0, 0, 0)");
+		$l->close();
+		return $auctions;	
+	}
+	else#Auctions in pause
+		return null;
+	
 }
 
 function analize_auctions($auctions)

@@ -10,6 +10,13 @@ shmop_write($shm_id, $updating_db_lock, 0);//Write in
 
 for($i = 0; $i < 5; $i++)
 {
+	$hour = date("H");
+	while($hour >= 0 && $hour < 12)
+	{
+		echo "Auctions in pause " . $hour . "\n";
+		sleep(600);#Sleep 10 minutes
+		$hour = date("H");
+	}
 	$pid = pcntl_fork();
 	if($pid == -1)
 		die("Error forking...\n");
@@ -25,21 +32,19 @@ parent_loop($shm_id);
 
 function parent_loop($shm_id)
 {
-	//echo "Parent -> locking\n";
-	shmop_write($shm_id, 1, 0);//Locking
+	shmop_write($shm_id, 1, 0);#Locking
 	$auctions = get_and_insert_auctions();
-	shmop_write($shm_id, 0, 0);//Unlocking
-	//echo "Parent -> unlocking\n";
+	shmop_write($shm_id, 0, 0);#Unlocking
 
 	while(true)
 	{
 		sleep(300);//5 Minutes
 		check_auctions_status($auctions);#Check using database?
-		//echo "Parent -> locking\n";
+		#TODO: manage $auctions == null -> auctions in pause
 		shmop_write($shm_id, 1, 0);//Locking
 		$auctions = get_and_insert_auctions();
 		shmop_write($shm_id, 0, 0);//Unlocking
-		//echo "Parent -> unlocking\n";
+		
 	}
 }
 

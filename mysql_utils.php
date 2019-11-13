@@ -77,6 +77,14 @@ function last_10($table)
 	return query("SELECT * FROM " . $table . " ORDER BY n_puntate DESC LIMIT 10");
 }
 
+function  query_to_bidoo_stats($query)
+{
+	$l = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
+	$res = $l->query($query);
+	$l->close();
+	return $res;
+}
+
 function create_html_table($table)
 {
 	echo "<table>";
