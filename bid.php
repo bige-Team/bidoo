@@ -190,7 +190,7 @@
 	function scaricaArray($name) {
 		$arr = last_10($name);	//prendo i dati delle ultime 10 puntate dal database
 		
-		if($arr != null){
+		if($arr != false){
 			$arr = $arr->fetch_all();	//trasformo i dati per poterli leggere in un array di array
 
 			foreach ($arr as $value) {

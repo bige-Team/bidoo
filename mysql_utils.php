@@ -14,12 +14,13 @@ function connect()
 //time_stamp -> INT tipo_puntata -> char(1) id_utente -> VARCHAR(15)
 function create_table($name)
 {
-	query("CREATE TABLE if not exists " . $name . " (
+	$res = query("CREATE TABLE if not exists " . $name . " (
 		id_utente VARCHAR(15),
 		time_stamp INT,
 		n_puntate INT PRIMARY KEY,
 		tipo_puntata char(1)
 	);");
+	return $res;
 }
 
 function query($query)

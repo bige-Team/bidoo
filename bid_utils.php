@@ -1,5 +1,4 @@
 <?php
-include_once "mysql_utils";
 /*
 * Get the auctions from it.bidoo.com
 * $ids[n_auction] => [auction_name] 
@@ -117,34 +116,43 @@ function get_and_insert_auctions()
 	
 }
 
+/*
+* $auctions [$i]=>0->[name],1->[id]
+*/
 function analize_auctions($auctions)
 {
-	//$auctions [$i]=>0->[name],1->[id]
+	$res = "";
+	do
+	{
+		for ($i=0; $i < count($auctions); $i++) 
+		{ 
+			$name = $auctions[$i][0];
+			$id = $auctions[$i][1];
+			$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$id.'&LISTID=0');
+			$res = generaArray($s, $id, $name, $auctions);
 
-	for ($i=0; $i < count($auctions); $i++) 
-	{ 
-		$name = $auctions[$i][0];
-		$id = $auctions[$i][1];
-		$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$id.'&LISTID=0');
-		$new = generaArray($s, $id, $name, $auctions);
-
-		if(!is_null($new))
-			insert_array($name, $new);
-		elseif($new = 'CLOSED')
-			echo "Auction $name closed\n";
-	}
+			if(!is_null($res) && $res != "BREAK")
+				insert_array($name, $res);
+		}
+	}while($res != "BREAK");
+	echo "[" . getmypid() . "]: Breaked\n";
 }
 
-function generaArray($s, $key, $name, $ids) 
-{	//ANALIZZO IL FILE PHP
+/*
+* Analizes the php file
+*/
+function generaArray($s, $key, $name, $ids)
+{	
 	$pezzi = explode("|", $s);
 	$arr = scaricaArray($name);	//prendo dal database le ultime 10 puntate dell'asta
 
 	//1571240953*[8266194;ON;1571241000;1;;,]()		asta che deve ancora iniziare
-	if(strpos($s, 'ON') == true) {
+	if(strpos($s, 'ON') == true) 
+	{
 		//se l'asta è in corso
-		if(count($pezzi) > 1) {	//se non c'è almeno una puntata allora l'asta deve ancora iniziare e non salvo nulla
-
+		if(count($pezzi) > 1) 
+		{	
+			//se non c'è almeno una puntata allora l'asta deve ancora iniziare e non salvo nulla
 			$primoPezzo = explode(",", $pezzi[0]);
 			$primaRiga2 = explode(";", $primoPezzo[1]);
 
@@ -160,9 +168,11 @@ function generaArray($s, $key, $name, $ids)
 			//ribalto l'array
 			
 			//ora su $pezzi ho un'array di stringhe, una stringa è una puntata formattata: puntate_totali;nome;timestamp;tipo_puntata
-			if(!is_null($pezzi)){	//se l'array non è vuoto
+			if(!is_null($pezzi))
+			{	//se l'array non è vuoto
 				$pezzi = array_reverse($pezzi);	//lo rovescio
-				if(!is_null($arr)){	//se la tabella di quell'asta non è vuota
+				if(!is_null($arr))
+				{	//se la tabella di quell'asta non è vuota
 					$elems = array_diff($pezzi, $arr);
 					return $elems;
 				}
@@ -171,15 +181,18 @@ function generaArray($s, $key, $name, $ids)
 			}
 			return null;
 		}
-		else {
+		else 
+		{
 			//l'asta deve ancora iniziare
+			echo "[" . getmypid() . "]: Auction '$name' not started yet\n";
 			return null;
 		}
 	}
 	else if(strpos($s, 'OFF') == true) {
 		#AUCTION CLOSED
 		//TODO: decrease count of $auctions_count
-		return 'CLOSED';
+		echo "[" . getmypid() . "]: Auction '$name' closed\n";
+		return "BREAK";
 	}
 	else {
 		//asta in stop, non faccio nulla
@@ -190,11 +203,11 @@ function generaArray($s, $key, $name, $ids)
 function scaricaArray($name) 
 {
 	$arr = last_10($name);	//prendo i dati delle ultime 10 puntate dal database
-	$arr1 = array();
-	if($arr != null)
+	$res = array();
+	if($arr != false)
 	{
 		$arr = $arr->fetch_all();	//trasformo i dati per poterli leggere in un array di array
-
+		$i = 0;
 		foreach ($arr as $value)
 		{
 			$puntate = $value[0];
@@ -202,10 +215,11 @@ function scaricaArray($name)
 			$time = $value[2];
 			$tipo = $value[3];
 			$elem = $puntate.';'.$nome.';'.$time.';'.$tipo;
-			$arr1[] = $elem;#???
+			$res[$i] = $elem;
+			$i++;
 		}
-		return $arr1;
+		return $res;
 	}
-	return nulla;
+	return null;
 }
 ?>

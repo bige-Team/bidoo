@@ -22,7 +22,7 @@ for($i = 0; $i < 5; $i++)
 		die("Error forking...\n");
 	elseif($pid == 0) #Child code
 	{
-		child_loop();
+		child_loop($i);
 		exit();
 	}
 }
@@ -47,9 +47,8 @@ function parent_loop($shm_id)
 	}
 }
 
-function child_loop()
+function child_loop($iteration)
 {
-	usleep(rand(100000,500000));
 	echo "Started thread " . getmypid() . "\n";
 	$max_auctions = 10;
 	$auctions_count = 0;
@@ -64,20 +63,24 @@ function child_loop()
 			//If it is, just wait in the loop
 			while($updating_db_lock != 0)
 			{
-				usleep(200000);#200 ms
+				echo "[" . getmypid() . "]: Sleeping, database being updated\n";
+				usleep(rand(100000,600000));#100-600 ms
 				$updating_db_lock = shmop_read($shm_id, 0, 1);
-				//echo "Child " . getmypid() . " -> locked\n";
 			}
-
+			sleep($iteration);
 			$auction_needed = $max_auctions - $auctions_count;
+			echo "[" . getmypid() . "]: Retriving auctions to analize, need $auction_needed\n";
 			$l = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
 			$res = $l->query("SELECT a.name, a.id FROM auction_tracking as a WHERE a.assigned=0 AND a.terminated=0 ORDER BY a.name LIMIT $auction_needed");
 			$res = $res->fetch_all();
+			echo "[" . getmypid() . "]: My auctions:\n";
+			print_r($res);
+			echo "\n";
 			if(count($res) == 0)#No auctions aviable
 			{
 				echo "[" . getmypid() . "]: No free auctions, waiting...\n";
 				$l->close();
-				sleep(30);
+				sleep(30);#Sleep 30 seconds
 			}
 			else#Some auctions aviable
 			{
@@ -88,16 +91,20 @@ function child_loop()
 				}
 				$l->close();
 				for($i = 0; $i < count($res); $i++)
-					create_table($current);
+				{
+					$name = $res[$i][0];
+					$res = create_table($name);
+					echo "[" . getmypid() . "]: Creating table for $name with result $res\n";
+				}
 
 				$auctions_count += count($res);
-				echo "[" . getmypid() . "]: Starting analizing\n";
+				echo "[" . getmypid() . "]: Starting analizing $auctions_count auctions\n";
 				analize_auctions($res);
 			}
 		}
 		else
 		{
-
+			//echo "[" . getmypid() . "]: No need of more auctions: analizing $auctions_count\n";
 		}
 		
 	}
