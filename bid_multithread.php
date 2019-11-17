@@ -33,13 +33,15 @@ parent_loop($shm_id);
 function parent_loop($shm_id)
 {
 	shmop_write($shm_id, 1, 0);#Locking
+	echo "[parent]: gathering auctions...\n";
 	$auctions = get_and_insert_auctions();
 	shmop_write($shm_id, 0, 0);#Unlocking
 
 	while(true)
 	{
 		sleep(300);//5 Minutes
-		check_auctions_status($auctions);#Check using database?
+		echo "[parent]: gathering auctions...\n";
+		//check_auctions_status();
 		#TODO: manage $auctions == null -> auctions in pause
 		shmop_write($shm_id, 1, 0);//Locking
 		$auctions = get_and_insert_auctions();
@@ -64,7 +66,7 @@ function child_loop($iteration)
 			while($updating_db_lock != 0)
 			{
 				echo "[" . getmypid() . "]: Sleeping, database being updated\n";
-				usleep(rand(100000,600000));#100-600 ms
+				usleep(rand(300000,600000));#300-600 ms
 				$updating_db_lock = shmop_read($shm_id, 0, 1);
 			}
 			sleep($iteration);
@@ -90,16 +92,19 @@ function child_loop($iteration)
 					$l->query("UPDATE auction_tracking SET auction_tracking.assigned=1 WHERE auction_tracking.name='$current'");
 				}
 				$l->close();
+
 				for($i = 0; $i < count($res); $i++)
 				{
 					$name = $res[$i][0];
-					$res = create_table($name);
-					echo "[" . getmypid() . "]: Creating table for $name with result $res\n";
+					$state = create_table($name);
+					echo "[" . getmypid() . "]: Creating table for $name with result $state\n";
 				}
 
 				$auctions_count += count($res);
 				echo "[" . getmypid() . "]: Starting analizing $auctions_count auctions\n";
 				analize_auctions($res);
+				echo "[" . getmypid() . "]: Breaked, sleeping";
+				sleep(10);
 			}
 		}
 		else

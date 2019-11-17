@@ -82,11 +82,13 @@ function string_to_array($string, $separator)
 /*
 * Checks if the auction is terminated, if so update the table auction_tracking
 */
-function check_auctions_status($auctions)
+function check_auctions_status()
 {
-	foreach ($auctions as $key => $value) 
+	$res = query_to_bidoo_stats("SELECT a.id from auction_tracking as a where a.assigned=1");
+	$res = $res->fetch_all();#$res[0] => Array([0] => id);
+	foreach ($res as $key => $value) 
 	{
-		$s = file_get_contents("https://it.bidoo.com/data.php?ALL=$key&LISTID=0");
+		$s = file_get_contents("https://it.bidoo.com/data.php?ALL=$value[0]&LISTID=0");
 		if(strpos($s, 'OFF') == true)
 		{
 			$l = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
@@ -121,7 +123,7 @@ function get_and_insert_auctions()
 */
 function analize_auctions($auctions)
 {
-	$res = "";
+	$res = array();
 	do
 	{
 		for ($i=0; $i < count($auctions); $i++) 
@@ -133,6 +135,10 @@ function analize_auctions($auctions)
 
 			if(!is_null($res) && $res != "BREAK")
 				insert_array($name, $res);
+			if($res  == "NOT_STARTED_YET")
+			{
+				sleep(1);
+			}
 		}
 	}while($res != "BREAK");
 	echo "[" . getmypid() . "]: Breaked\n";
@@ -151,7 +157,7 @@ function generaArray($s, $key, $name, $ids)
 	{
 		//se l'asta è in corso
 		if(count($pezzi) > 1) 
-		{	
+		{
 			//se non c'è almeno una puntata allora l'asta deve ancora iniziare e non salvo nulla
 			$primoPezzo = explode(",", $pezzi[0]);
 			$primaRiga2 = explode(";", $primoPezzo[1]);
@@ -185,16 +191,32 @@ function generaArray($s, $key, $name, $ids)
 		{
 			//l'asta deve ancora iniziare
 			echo "[" . getmypid() . "]: Auction '$name' not started yet\n";
-			return null;
+			return "NOT_STARTED_YET";
 		}
 	}
-	else if(strpos($s, 'OFF') == true) {
+	else if(strpos($s, 'OFF') == true) 
+	{
 		#AUCTION CLOSED
 		//TODO: decrease count of $auctions_count
 		echo "[" . getmypid() . "]: Auction '$name' closed\n";
+		query_to_bidoo_stats("UPDATE auction_tracking as a SET a.terminated=1 WHERE a.name='$name'");
+		//Get a new auction
+		$pos_to_delete = array();
+		$i = 0;
+		foreach ($ids as $key => $value) 
+		{
+			if($value[0] == $name)
+			{
+				$pos_to_delete[$i] = $key;
+				$i++;
+			}
+		}
+
+		
 		return "BREAK";
 	}
-	else {
+	else 
+	{
 		//asta in stop, non faccio nulla
 		return null;
 	}
