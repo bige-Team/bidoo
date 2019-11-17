@@ -3,10 +3,9 @@ include_once "bid_utils.php";
 include_once "mysql_utils.php";
 set_time_limit(0);
 //Creating shm segment
-$updating_db_lock = 1;
 $shm_key = ftok(__FILE__, 'b');//Generete a hex value
 $shm_id = shmop_open($shm_key, "c", 0644, 1);//Create the shm space
-shmop_write($shm_id, $updating_db_lock, 0);//Write in
+shmop_write($shm_id, 1, 0);//Locking
 
 for($i = 0; $i < 5; $i++)
 {
@@ -56,7 +55,7 @@ function child_loop($iteration)
 	$auctions_count = 0;
 	while(true)
 	{
-		if($auctions_count < $max_auctions)
+		if($auctions_count < $max_auctions)#I need more auctions
 		{
 			//Read if the database is being updated
 			$shm_key = ftok(__FILE__, 'b');
@@ -72,20 +71,17 @@ function child_loop($iteration)
 			sleep($iteration);
 			$auction_needed = $max_auctions - $auctions_count;
 			echo "[" . getmypid() . "]: Retriving auctions to analize, need $auction_needed\n";
-			$l = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
-			$res = $l->query("SELECT a.name, a.id FROM auction_tracking as a WHERE a.assigned=0 AND a.terminated=0 ORDER BY a.name LIMIT $auction_needed");
+			$res = query_to_bidoo_stats("SELECT a.name, a.id FROM auction_tracking as a WHERE a.assigned=0 AND a.terminated=0 ORDER BY a.name LIMIT $auction_needed");
 			$res = $res->fetch_all();
-			echo "[" . getmypid() . "]: My auctions:\n";
-			print_r($res);
-			echo "\n";
+
 			if(count($res) == 0)#No auctions aviable
 			{
 				echo "[" . getmypid() . "]: No free auctions, waiting...\n";
-				$l->close();
 				sleep(30);#Sleep 30 seconds
 			}
 			else#Some auctions aviable
 			{
+				$l = connect_to_stats();
 				for($i = 0; $i < count($res); $i++)
 				{
 					$current = $res[$i][0];
@@ -102,7 +98,7 @@ function child_loop($iteration)
 
 				$auctions_count += count($res);
 				echo "[" . getmypid() . "]: Starting analizing $auctions_count auctions\n";
-				analize_auctions($res);
+				analize_auctions($res, $auctions_count);
 				echo "[" . getmypid() . "]: Breaked, sleeping";
 				sleep(10);
 			}

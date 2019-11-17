@@ -91,9 +91,7 @@ function check_auctions_status()
 		$s = file_get_contents("https://it.bidoo.com/data.php?ALL=$value[0]&LISTID=0");
 		if(strpos($s, 'OFF') == true)
 		{
-			$l = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
-			$l->query("UPDATE auction_tracking as a SET a.terminated = 1 WHERE a.name='$value'");
-			$l->close();
+			query_to_bidoo_stats("UPDATE auction_tracking as a SET a.terminated = 1 WHERE a.name='$value'");
 		}
 	}
 }
@@ -104,39 +102,58 @@ function check_auctions_status()
 function get_and_insert_auctions()
 {
 	$hour = date("H");
-	if(!($hour >= 0 && $hour < 12))#Auctions running
+	if(!($hour >= 0 && $hour < 12))
 	{
+		//Auctions running
 		$auctions = get_auctions();
-		$l = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
+		$l = connect_to_stats();
 		foreach ($auctions as $key => $value) 
 			$l->query("INSERT INTO auction_tracking VALUES ('$value', $key, 0, 0, 0)");
 		$l->close();
 		return $auctions;	
 	}
-	else#Auctions in pause
+	else
+	{
+		//Auctions in pause
 		return null;
-	
+	}
 }
 
 /*
 * $auctions [$i]=>0->[name],1->[id]
 */
-function analize_auctions($auctions)
+function analize_auctions($auctions, &$auctions_count)
 {
-	$res = array();
+	$res = "";
 	do
 	{
 		for ($i=0; $i < count($auctions); $i++) 
 		{ 
 			$name = $auctions[$i][0];
 			$id = $auctions[$i][1];
-			$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$id.'&LISTID=0');
+			$s = file_get_contents("https://it.bidoo.com/data.php?ALL=$id&LISTID=0", false, get_stream_context(1));
 			$res = generaArray($s, $id, $name, $auctions);
 
-			if(!is_null($res) && $res != "BREAK")
+			if(!is_null($res) && is_array($res))
+			{
+				#Everything ok
 				insert_array($name, $res);
+			}
+			elseif(!is_array($res) && $res != "NOT_STARTED_YET")
+			{
+				#Auction closed
+				unset($auctions[$res]);#!! NOT WORKING
+				#GET NEW AUCTION:
+				/*
+					Check if db is not being updated
+					Get the needed auctions
+				*/
+				$auctions_count--;
+				echo "[" . getmypid() . "]: Array count: " . count($auctions) . ", num: $auctions_count\n";
+			}
 			if($res  == "NOT_STARTED_YET")
 			{
+				#TODO: put auction aside and pick it up after 5 sec
 				sleep(1);
 			}
 		}
@@ -200,24 +217,11 @@ function generaArray($s, $key, $name, $ids)
 		//TODO: decrease count of $auctions_count
 		echo "[" . getmypid() . "]: Auction '$name' closed\n";
 		query_to_bidoo_stats("UPDATE auction_tracking as a SET a.terminated=1 WHERE a.name='$name'");
-		//Get a new auction
-		$pos_to_delete = array();
-		$i = 0;
-		foreach ($ids as $key => $value) 
-		{
-			if($value[0] == $name)
-			{
-				$pos_to_delete[$i] = $key;
-				$i++;
-			}
-		}
-
-		
-		return "BREAK";
+		return $name;
 	}
 	else 
 	{
-		//asta in stop, non faccio nulla
+		#Auction in pause
 		return null;
 	}
 }
@@ -243,5 +247,13 @@ function scaricaArray($name)
 		return $res;
 	}
 	return null;
+}
+
+/*
+* Pass it to a file_get_contents to set the timeout timer to $timer
+*/
+function get_stream_context($timer)
+{
+	return $ctx = stream_context_create(array('http'=>array('timeout' => $timer,)));
 }
 ?>

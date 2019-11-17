@@ -2,15 +2,25 @@
 function connect()
 {
 	$link = new mysqli("127.0.0.1", "root", "", "bidoo");
-	//$link = new mysqli("localhost", "root", "Rt9du2pg", "bidoo");
-	//$link = new mysqli("localhost", "root", "", "bidoo");
 	if (mysqli_connect_errno()) 
 	{
 		printf("linkect failed: %s\n", mysqli_connect_error());
-		return;
+		return null;
 	}
 	return $link;
 }
+
+function connect_to_stats()
+{
+	$link = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
+	if (mysqli_connect_errno()) 
+	{
+		printf("linkect failed: %s\n", mysqli_connect_error());
+		return null;
+	}
+	return $link;
+}
+
 //time_stamp -> INT tipo_puntata -> char(1) id_utente -> VARCHAR(15)
 function create_table($name)
 {
@@ -35,6 +45,7 @@ function delete_line($table, $string) {
 	query("DELETE FROM " . $table . " WHERE name = \"".$string."\"");
 }
 function insert_elem($table, $string) {
+	#TODO: fix VALUES (...) wrong ''
 	query("INSERT INTO " . $table . " VALUES (\"".$string."\")");
 }
 
@@ -59,13 +70,22 @@ function insert_line($table, $string)
 	$id_utente = $parts[1];
 	$time_stamp = $parts[2];
 	$tipo_puntata = $parts[3];
-	query("INSERT INTO " . $table . "(id_utente, time_stamp, n_puntate, tipo_puntata) VALUES (\"" .$id_utente. "\", " .$time_stamp. ", " .$n_puntate. ", \"" .$tipo_puntata. "\")");
+	query("INSERT INTO $table VALUES ('$id_utente', $time_stamp, $n_puntate, '$tipo_puntata')");
 }
 
 function insert_array($table, $arr)
 {
+	$l = connect();
 	for($i = 0; $i < count($arr) - 1; $i++)
-		insert_line($table, $arr[$i]);	
+	{
+		$parts = explode(';', $arr[$i]);
+		$n_puntate = $parts[0];
+		$id_utente = $parts[1];
+		$time_stamp = $parts[2];
+		$tipo_puntata = $parts[3];
+		query("INSERT INTO $table VALUES ('$id_utente', $time_stamp, $n_puntate, '$tipo_puntata')");
+	}
+	$l->close();
 }
 
 function select_row($table, $row_name)
