@@ -24,12 +24,12 @@ function connect_to_stats()
 //time_stamp -> INT tipo_puntata -> char(1) id_utente -> VARCHAR(15)
 function create_table($name)
 {
-	$res = query("CREATE TABLE if not exists " . $name . " (
+	$res = query("CREATE TABLE " . $name . " (
 		id_utente VARCHAR(15),
 		time_stamp INT,
 		n_puntate INT PRIMARY KEY,
 		tipo_puntata char(1)
-	);");
+	);");# if not exists
 	return $res;
 }
 

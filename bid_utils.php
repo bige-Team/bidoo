@@ -122,35 +122,32 @@ function get_and_insert_auctions()
 /*
 * $auctions [$i]=>0->[name],1->[id]
 */
-function analize_auctions($auctions, &$auctions_count)
+function analize_auctions($auctions, &$auctions_count, $max_auctions		)
 {
 	$res = "";
+	$pos_to_delete = array();
 	do
 	{
 		for ($i=0; $i < count($auctions); $i++) 
 		{ 
 			$name = $auctions[$i][0];
 			$id = $auctions[$i][1];
-			$s = file_get_contents("https://it.bidoo.com/data.php?ALL=$id&LISTID=0", false, get_stream_context(1));//Set the timeout timer to 1
+			$s = @file_get_contents("https://it.bidoo.com/data.php?ALL=$id&LISTID=0", false, get_stream_context(1));//Set the timeout timer to 1, @ -> suppress wrning
+
 			$res = generaArray($s, $id, $name, $auctions);
 
 			if(!is_null($res) && is_array($res))
 			{
 				#Everything ok
-				echo "Inserting values for '$name'";
+				//echo "[" . getmypid() . "]: Inserting " . count($res) . " values for '$name'\n";
 				insert_array($name, $res);
 			}
-			elseif(!is_array($res) && $res != "NOT_STARTED_YET")
+			elseif(!is_array($res) && $res == "CLOSED")
 			{
 				#Auction closed
-				unset($auctions[$res]);#!! NOT WORKING
-				#GET NEW AUCTION:
-				/*
-					Check if db is not being updated
-					Get the needed auctions
-				*/
-				$auctions_count--;
-				echo "[" . getmypid() . "]: Array count: " . count($auctions) . ", num: $auctions_count\n";
+				$pos_to_delete[] = $i;
+				echo "[" . getmypid() . "]: Removing '$name' from array\n";
+				
 			}
 			if($res  == "NOT_STARTED_YET")
 			{
@@ -158,6 +155,19 @@ function analize_auctions($auctions, &$auctions_count)
 				sleep(1);
 			}
 		}
+		//Remove the closed auctions from the array
+		for($i = 0; $i < count($pos_to_delete); $i++)
+		{
+			unset($auctions[$pos_to_delete[$i]]);
+			$auctions_count--;
+		}
+		echo "[" . getmypid() . "]: Array count: " . count($auctions) . ", num: $auctions_count\n";
+		print_r($auctions);
+		#TODO: GET NEW AUCTIONS
+		/*
+			Check if db is not being updated
+			Get the needed auctions
+		*/
 	}while($res != "BREAK");
 	echo "[" . getmypid() . "]: Breaked\n";
 }
@@ -203,12 +213,12 @@ function generaArray($s, $key, $name, $ids)
 				else
 					return $pezzi;
 			}
-			return null;
+			return null;#??
 		}
 		else 
 		{
 			//l'asta deve ancora iniziare
-			echo "[" . getmypid() . "]: Auction '$name' not started yet\n";
+			//echo "[" . getmypid() . "]: Auction '$name' not started yet\n";
 			return "NOT_STARTED_YET";
 		}
 	}
@@ -218,7 +228,7 @@ function generaArray($s, $key, $name, $ids)
 		//TODO: decrease count of $auctions_count
 		echo "[" . getmypid() . "]: Auction '$name' closed\n";
 		query_to_bidoo_stats("UPDATE auction_tracking as a SET a.terminated=1 WHERE a.name='$name'");
-		return $name;
+		return "CLOSED";
 	}
 	else 
 	{

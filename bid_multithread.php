@@ -98,7 +98,7 @@ function child_loop($iteration)
 
 				$auctions_count += count($res);
 				echo "[" . getmypid() . "]: Starting analizing $auctions_count auctions\n";
-				analize_auctions($res, $auctions_count);
+				analize_auctions($res, $auctions_count, $max_auctions);
 				echo "[" . getmypid() . "]: Breaked, sleeping";
 				sleep(10);
 			}
