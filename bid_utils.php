@@ -131,12 +131,13 @@ function analize_auctions($auctions, &$auctions_count)
 		{ 
 			$name = $auctions[$i][0];
 			$id = $auctions[$i][1];
-			$s = file_get_contents("https://it.bidoo.com/data.php?ALL=$id&LISTID=0", false, get_stream_context(1));
+			$s = file_get_contents("https://it.bidoo.com/data.php?ALL=$id&LISTID=0", false, get_stream_context(1));//Set the timeout timer to 1
 			$res = generaArray($s, $id, $name, $auctions);
 
 			if(!is_null($res) && is_array($res))
 			{
 				#Everything ok
+				echo "Inserting values for '$name'";
 				insert_array($name, $res);
 			}
 			elseif(!is_array($res) && $res != "NOT_STARTED_YET")
