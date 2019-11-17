@@ -26,37 +26,6 @@ function get_auctions()
 	return $ids;
 }
 
-function loop(&$ids, &$toRemove)
-{
-	do
-	{
-		$hour = date("H");
-		$min = date("i");
-
-		if(!($hour >= 0 && $hour < 12)) //se non siamo nell'orario di stop
-		{	
-			foreach ($ids as $key => $value) 
-			{
-				$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$key.'&LISTID=0');	//stringa del file php
-				$new = generaArray($s, $key, $ids);
-
-				if(!is_null($new))
-				{		//se ci sono aggiornamenti da fare
-					create_table($value);
-					insert_array($value, $new);
-				}
-			}
-
-			foreach ($toRemove as $value)
-			{
-				echo "rimossa l'asta " . $ids[$value];
-				unset($ids[$value]);	//rimuove l'asta dall'array delle aste
-			}
-			$toRemove = [];	//resetto l'array con gli elementi da rimuovere
-		}
-	}while(true/*!isset($_REQUEST['STOP'])*/);
-}
-
 /*
 * Converts an array into a string using $separator
 */
@@ -145,9 +114,8 @@ function analize_auctions($auctions, &$auctions_count, $max_auctions		)
 			elseif(!is_array($res) && $res == "CLOSED")
 			{
 				#Auction closed
-				$pos_to_delete[] = $i;
-				echo "[" . getmypid() . "]: Removing '$name' from array\n";
-				
+				echo "[" . getmypid() . "]: Auction '$name' closed\n";
+				$pos_to_delete[] = $i;				
 			}
 			if($res  == "NOT_STARTED_YET")
 			{
@@ -156,18 +124,41 @@ function analize_auctions($auctions, &$auctions_count, $max_auctions		)
 			}
 		}
 		//Remove the closed auctions from the array
+		$string = "";
 		for($i = 0; $i < count($pos_to_delete); $i++)
 		{
 			unset($auctions[$pos_to_delete[$i]]);
 			$auctions_count--;
+			$string .= " $i ";
 		}
-		echo "[" . getmypid() . "]: Array count: " . count($auctions) . ", num: $auctions_count\n";
-		print_r($auctions);
-		#TODO: GET NEW AUCTIONS
-		/*
-			Check if db is not being updated
-			Get the needed auctions
-		*/
+		$auctions_temp = array();
+		foreach ($auctions as $key => $value)
+		{
+			$auctions_temp[] = $value;
+		}
+		$auctions = $auctions_temp;
+		echo "[" . getmypid() . "]: Array count: " . count($auctions) . ", num: $auctions_count; Removed ($string)\n";
+		$pos_to_delete = array();
+
+		//Get new auctions
+		$needed_auctions = $max_auctions - $auctions_count;
+		if(!is_database_locked() && $needed_auctions < $max_auctions)
+		{
+			$new_auctions = query_to_bidoo_stats("SELECT a.name, a.id FROM auction_tracking as a WHERE a.assigned=0 AND a.terminated=0 ORDER BY a.name LIMIT $needed_auctions");
+			$new_auctions = $new_auctions->fetch_all();
+			$l = connect_to_stats();
+			for($i = 0; $i < count($new_auctions); $i++)
+			{
+				$current = $new_auctions[$i][0];
+				$l->query("UPDATE auction_tracking SET auction_tracking.assigned=1 WHERE auction_tracking.name='$current'");
+			}
+			$l->close();
+			echo "[" . getmypid() . "]: Getting $needed_auctions new auctions, receiving " . count($new_auctions) . "\n";
+			foreach ($new_auctions as $key => $value) 
+			{
+				$aucions[] = $value;
+			}
+		}
 	}while($res != "BREAK");
 	echo "[" . getmypid() . "]: Breaked\n";
 }
@@ -225,8 +216,6 @@ function generaArray($s, $key, $name, $ids)
 	else if(strpos($s, 'OFF') == true) 
 	{
 		#AUCTION CLOSED
-		//TODO: decrease count of $auctions_count
-		echo "[" . getmypid() . "]: Auction '$name' closed\n";
 		query_to_bidoo_stats("UPDATE auction_tracking as a SET a.terminated=1 WHERE a.name='$name'");
 		return "CLOSED";
 	}
@@ -266,5 +255,14 @@ function scaricaArray($name)
 function get_stream_context($timer)
 {
 	return $ctx = stream_context_create(array('http'=>array('timeout' => $timer,)));
+}
+
+function is_database_locked()
+{
+	$shm_key = ftok(__FILE__, 'b');
+	$shm_id = shmop_open($shm_key, "w", 0, 0);
+	$val = shmop_read($shm_id, 0, 1);
+	shmop_close($shm_id);
+	return $val;
 }
 ?>

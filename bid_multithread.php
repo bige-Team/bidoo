@@ -6,6 +6,7 @@ set_time_limit(0);
 $shm_key = ftok(__FILE__, 'b');//Generete a hex value
 $shm_id = shmop_open($shm_key, "c", 0644, 1);//Create the shm space
 shmop_write($shm_id, 1, 0);//Locking
+shmop_close($shm_id);
 
 for($i = 0; $i < 5; $i++)
 {
@@ -29,12 +30,15 @@ for($i = 0; $i < 5; $i++)
 parent_loop($shm_id);
 
 
-function parent_loop($shm_id)
+function parent_loop()
 {
+	$shm_key = ftok(__FILE__, 'b');
+	$shm_id = shmop_open($shm_key, "w", 0, 0);
 	shmop_write($shm_id, 1, 0);#Locking
 	echo "[parent]: gathering auctions...\n";
 	$auctions = get_and_insert_auctions();
 	shmop_write($shm_id, 0, 0);#Unlocking
+	shmop_close($shm_id);
 
 	while(true)
 	{
@@ -42,9 +46,12 @@ function parent_loop($shm_id)
 		echo "[parent]: gathering auctions...\n";
 		//check_auctions_status();
 		#TODO: manage $auctions == null -> auctions in pause
+		$shm_key = ftok(__FILE__, 'b');
+		$shm_id = shmop_open($shm_key, "w", 0, 0);
 		shmop_write($shm_id, 1, 0);//Locking
 		$auctions = get_and_insert_auctions();
 		shmop_write($shm_id, 0, 0);//Unlocking
+		shmop_close($shm_id);
 	}
 }
 
@@ -110,7 +117,7 @@ function child_loop($iteration)
 		
 	}
 	
-	shmop_close($shm_id);
+	shmop_delete($shm_id);
 }
 //print_r($auctions);
 /*
