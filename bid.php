@@ -1,6 +1,6 @@
 	<?php
 	// include_once('utils.php');
-
+start();
 	function start()
 	{
 		set_time_limit(0);
@@ -23,6 +23,7 @@
 
 				foreach ($ids as $key => $value) {
 					$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$key.'&LISTID=0');	//stringa del file php
+					echo $s . "<br>"	;
 					$new = generaArray($s, $key, $ids);
 
 					if(!is_null($new)){		//se ci sono aggiornamenti da fare
