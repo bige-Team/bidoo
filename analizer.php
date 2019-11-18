@@ -9,7 +9,7 @@
 </form>
 
 <?php
-include_once "utils.php";
+include_once "mysql_utils.php";
 
 if(isset($_POST['btnOK']))
 {
@@ -97,7 +97,7 @@ function update_user_rank()
 	//print_r($user_infos);
 
 	//li scrivo nella tabella user_ranking
-	$link = new mysqli("localhost", "root", "Rt9du2pg", "bidoo_stats");
+	$link = new mysqli("localhost", "root", "", "bidoo_stats");
 	foreach ($user_infos as $key => $value) 
 	{
 		
@@ -180,13 +180,5 @@ function update_user_rank()
 	$link->close();
 	*/
 
-}
-
-function query_to_bidoo_stats($query)
-{
-	$link = new mysqli("localhost", "root", "Rt9du2pg", "bidoo_stats");
-	$res = $link->query($query);
-	$link->close();
-	return $res;
 }
 ?>

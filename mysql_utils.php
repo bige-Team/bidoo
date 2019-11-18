@@ -1,29 +1,36 @@
 <?php
 function connect()
 {
-	//"sql7.freemysqlhosting.net", "sql7308522", "bCQvsAUzMS", "sql7308522")
-	$link = new mysqli("localhost", "root", "Rt9du2pg", "bidoo");
+	$link = new mysqli("127.0.0.1", "root", "", "bidoo");
 	if (mysqli_connect_errno()) 
 	{
 		printf("linkect failed: %s\n", mysqli_connect_error());
-		return;
+		return null;
 	}
 	return $link;
 }
+
+function connect_to_stats()
+{
+	$link = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
+	if (mysqli_connect_errno()) 
+	{
+		printf("linkect failed: %s\n", mysqli_connect_error());
+		return null;
+	}
+	return $link;
+}
+
 //time_stamp -> INT tipo_puntata -> char(1) id_utente -> VARCHAR(15)
 function create_table($name)
 {
-	query("CREATE TABLE if not exists " . $name . " (
-		id_utente VARCHAR(80),
-		time_stamp VARCHAR(20),
+	$res = query("CREATE TABLE " . $name . " (
+		id_utente VARCHAR(15),
+		time_stamp INT,
 		n_puntate INT PRIMARY KEY,
-		tipo_puntata INT
-	);");
-
-	$l = new mysqli("localhost", "root", "Rt9du2pg", "bidoo_stats");
-	$l->query("INSERT INTO auction_tracking (name, analized) VALUES ('". $name . "', 0)");	
-	$l->close();
-	
+		tipo_puntata char(1)
+	);");# if not exists
+	return $res;
 }
 
 function query($query)
@@ -32,6 +39,14 @@ function query($query)
 	$result = $link->query($query);
 	$link->close();
 	return $result;
+}
+
+function delete_line($table, $string) {
+	query("DELETE FROM " . $table . " WHERE name = \"".$string."\"");
+}
+function insert_elem($table, $string) {
+	#TODO: fix VALUES (...) wrong ''
+	query("INSERT INTO " . $table . " VALUES (\"".$string."\")");
 }
 
 function insert_file($table, $file)
@@ -44,7 +59,7 @@ function insert_file($table, $file)
 		$id_utente = $parts[1];
 		$time_stamp = $parts[2];
 		$tipo_puntata = $parts[3];
-		query("INSERT INTO " . $table . "(id_utente, time_stamp, n_puntate, tipo_puntata) VALUES (\"" . $id_utente . "\", \"" . $time_stamp . "\", " . $n_puntate . ", " . $tipo_puntata . ")");
+		query("INSERT INTO " . $table . " VALUES ('" .$id_utente. "', " .$time_stamp. ", " .$n_puntate. ", '" .$tipo_puntata. "')");
 	}
 }
 
@@ -55,13 +70,22 @@ function insert_line($table, $string)
 	$id_utente = $parts[1];
 	$time_stamp = $parts[2];
 	$tipo_puntata = $parts[3];
-	query("INSERT INTO ". $table . "(id_utente, time_stamp, n_puntate, tipo_puntata) VALUES ('" . $id_utente . "'",  . $time_stamp . ", " . $n_puntate . ", '" . $tipo_puntata . "')");
+	query("INSERT INTO $table VALUES ('$id_utente', $time_stamp, $n_puntate, '$tipo_puntata')");
 }
 
 function insert_array($table, $arr)
 {
+	$l = connect();
 	for($i = 0; $i < count($arr) - 1; $i++)
-		insert_line($table, $arr[$i]);	
+	{
+		$parts = explode(';', $arr[$i]);
+		$n_puntate = $parts[0];
+		$id_utente = $parts[1];
+		$time_stamp = $parts[2];
+		$tipo_puntata = $parts[3];
+		query("INSERT INTO $table VALUES ('$id_utente', $time_stamp, $n_puntate, '$tipo_puntata')");
+	}
+	$l->close();
 }
 
 function select_row($table, $row_name)
@@ -72,6 +96,14 @@ function select_row($table, $row_name)
 function last_10($table)
 {
 	return query("SELECT * FROM " . $table . " ORDER BY n_puntate DESC LIMIT 10");
+}
+
+function  query_to_bidoo_stats($query)
+{
+	$l = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
+	$res = $l->query($query);
+	$l->close();
+	return $res;
 }
 
 function create_html_table($table)
