@@ -1,5 +1,5 @@
 <?php
-include_once "utils.php";
+include_once "mysql_utils.php";
 if(isset($_REQUEST['btnOK']))
 {
 	$name = $_REQUEST['tableName'];
@@ -14,8 +14,15 @@ if(isset($_REQUEST['btnOK']))
 </head>
 <body>
 	<form>
-		<input type="text" name="tableName" placeholder="Database Name">
-		<button name="btnOK">OK</button>
+		<!--<input type="text" name="tableName" placeholder="Database Name">
+		<button name="btnOK">OK</button><br>-->
+		<?php
+		$names = get_table_names();
+		foreach ($names as $key => $value)
+		{
+			echo "<a href='adviser.php?name=$value' target='blank'>$value</a><br>";
+		}
+		?>
 	</form>
 </body>
 </html>

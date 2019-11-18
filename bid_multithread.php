@@ -44,7 +44,6 @@ function parent_loop()
 	{
 		sleep(300);//5 Minutes
 		echo "[parent]: gathering auctions...\n";
-		//check_auctions_status();
 		#TODO: manage $auctions == null -> auctions in pause
 		$shm_key = ftok(__FILE__, 'b');
 		$shm_id = shmop_open($shm_key, "w", 0, 0);
@@ -57,7 +56,6 @@ function parent_loop()
 
 function child_loop($iteration)
 {
-	#TIMER?!?
 	echo "Started thread " . getmypid() . "\n";
 	$max_auctions = 10;
 	$auctions_count = 0;
@@ -78,7 +76,7 @@ function child_loop($iteration)
 			$updating_db_lock = shmop_read($shm_id, 0, 1);
 			shmop_close($shm_id);
 		}
-		sleep($iteration);
+		sleep($iteration*2);
 		$auction_needed = $max_auctions - $auctions_count;
 		echo "[" . getmypid() . "]: Retriving auctions to analize, need $auction_needed\n";
 		$res = query_to_bidoo_stats("SELECT a.name, a.id FROM auction_tracking as a WHERE a.assigned=0 AND a.terminated=0 ORDER BY a.name LIMIT $auction_needed");

@@ -1,12 +1,12 @@
 <?php
 /*
 * Get the auctions from it.bidoo.com
-* $ids[n_auction] => [auction_name] 
+* $auctions[n_auction] => [auction_name] 
 */
 function get_auctions() 
 {
 	$str = file_get_contents("https://it.bidoo.com");
-
+	
 	$temp = explode("pic_prd", $str);
 	for ($i=0; $i <count($temp) ; $i++) 
 	{
@@ -22,7 +22,6 @@ function get_auctions()
 			$ids[$temp3[count($temp3)-1]] = $links[$i];
 		}
 	}
-	//array_pop($ids);	//rimuovo l'ultimo elemento che è vuoto
 	return $ids;
 }
 
@@ -46,23 +45,6 @@ function array_to_string($array, $separator)
 function string_to_array($string, $separator)
 {
 	return explode($separator, $string);
-}
-
-/*
-* Checks if the auction is terminated, if so update the table auction_tracking
-*/
-function check_auctions_status()
-{
-	$res = query_to_bidoo_stats("SELECT a.id from auction_tracking as a where a.assigned=1");
-	$res = $res->fetch_all();#$res[0] => Array([0] => id);
-	foreach ($res as $key => $value) 
-	{
-		$s = file_get_contents("https://it.bidoo.com/data.php?ALL=$value[0]&LISTID=0");
-		if(strpos($s, 'OFF') == true)
-		{
-			query_to_bidoo_stats("UPDATE auction_tracking as a SET a.terminated = 1 WHERE a.name='$value'");
-		}
-	}
 }
 
 /*
@@ -91,7 +73,7 @@ function get_and_insert_auctions()
 /*
 * $auctions [$i]=>0->[name],1->[id]
 */
-function analize_auctions($auctions, &$auctions_count, $max_auctions)
+function analize_auctions($auctions, $auctions_count, $max_auctions)
 {
 	$res = "";
 	$pos_to_delete = array();
@@ -106,12 +88,11 @@ function analize_auctions($auctions, &$auctions_count, $max_auctions)
 				$id = $auctions[$i][1];
 				$s = @file_get_contents("https://it.bidoo.com/data.php?ALL=$id&LISTID=0", false, get_stream_context(1));//Set the timeout timer to 1, @ -> suppress wrning
 
-				$res = generaArray($s, $id, $name, $auctions);
+				$res = analize_page($s, $name);
 
 				if(!is_null($res) && is_array($res))
 				{
 					#Everything ok
-					//echo "[" . getmypid() . "]: Inserting " . count($res) . " values for '$name'\n";
 					insert_array($name, $res);
 				}
 				elseif(!is_array($res) && $res == "CLOSED")
@@ -119,11 +100,6 @@ function analize_auctions($auctions, &$auctions_count, $max_auctions)
 					#Auction closed
 					echo "[" . getmypid() . "]: Auction '$name' closed\n";
 					$pos_to_delete[] = $i;				
-				}
-				if($res  == "NOT_STARTED_YET")
-				{
-					#TODO: put auction aside and pick it up after 5 sec
-					sleep(1);
 				}
 			}
 			//Remove the closed auctions from the array
@@ -140,7 +116,6 @@ function analize_auctions($auctions, &$auctions_count, $max_auctions)
 				$auctions_temp[] = $value;
 			}
 			$auctions = $auctions_temp;
-			echo "[" . getmypid() . "]: Array count: " . count($auctions) . ", num: $auctions_count; Removed ($string)\n";
 			$pos_to_delete = array();
 
 			//Get new auctions
@@ -156,9 +131,11 @@ function analize_auctions($auctions, &$auctions_count, $max_auctions)
 					$l->query("UPDATE auction_tracking SET auction_tracking.assigned=1 WHERE auction_tracking.name='$current'");
 				}
 				$l->close();
-				echo "[" . getmypid() . "]: Getting $needed_auctions new auctions, receiving " . count($new_auctions) . "\n";
+				echo "[" . getmypid() . "]: Analizing $auctions_count, need $needed_auctions new auctions, receiving " . count($new_auctions) . "\n";
 				foreach ($new_auctions as $key => $value) 
 				{
+					$state = create_table($value[0]);
+					echo "[" . getmypid() . "]: Creating table for $value[0] with result $state\n";
 					$aucions[] = $value;
 				}
 			}
@@ -167,18 +144,19 @@ function analize_auctions($auctions, &$auctions_count, $max_auctions)
 		{
 			echo "[" . getmygid() . "]: Auction in pause, sleeping...\n";
 			sleep(600);#Sleep 10 minutes
-		}		
-	}while($res != "BREAK");
+		}	
+		$hour = date("H");	
+	}while($res != "BREAK");#Will never happen
 	echo "[" . getmypid() . "]: Breaked\n";
 }
 
 /*
 * Analizes the php file
 */
-function generaArray($s, $key, $name, $ids)
+function analize_page($s, $name)
 {	
 	$pezzi = explode("|", $s);
-	$arr = scaricaArray($name);	//prendo dal database le ultime 10 puntate dell'asta
+	$arr = get_last_10($name);	//prendo dal database le ultime 10 puntate dell'asta
 
 	//1571240953*[8266194;ON;1571241000;1;;,]()		asta che deve ancora iniziare
 	if(strpos($s, 'ON') == true) 
@@ -245,25 +223,23 @@ function generaArray($s, $key, $name, $ids)
 	}
 }
 
-function scaricaArray($name) 
+function get_last_10($name) 
 {
 	$arr = last_10($name);	//prendo i dati delle ultime 10 puntate dal database
-	$res = array();
+	$new_array = array();
 	if($arr != false)
 	{
 		$arr = $arr->fetch_all();	//trasformo i dati per poterli leggere in un array di array
-		$i = 0;
 		foreach ($arr as $value)
 		{
-			$puntate = $value[0];
-			$nome = $value[1];
-			$time = $value[2];
-			$tipo = $value[3];
-			$elem = $puntate.';'.$nome.';'.$time.';'.$tipo;
-			$res[$i] = $elem;
-			$i++;
+			$n_puntate = $value[0];
+			$id_utente = $value[1];
+			$time_stamp = $value[2];
+			$tipo_puntata = $value[3];
+			$elem = $n_puntate.';'.$id_utente.';'.$time_stamp.';'.$tipo_puntata;
+			$new_array[] = $elem;
 		}
-		return $res;
+		return $new_array;
 	}
 	return null;
 }
