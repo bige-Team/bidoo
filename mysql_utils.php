@@ -90,7 +90,7 @@ function insert_array($table, $arr)
 
 function select_row($table, $row_name)
 {
-	return query("SELECT " . $row_name . " FROM " . $table);
+	return query("SELECT " . $row_name . " FROM " . $table . " ORDER BY n_puntate DESC");
 }
 
 function last_10($table)
