@@ -13,7 +13,7 @@ for($i = 0; $i < 5; $i++)
 	$hour = date("H");
 	while($hour >= 0 && $hour < 12)
 	{
-		echo "Auctions in pause " . $hour . "\n";
+		//echo "Auctions in pause " . $hour . "\n";
 		sleep(600);#Sleep 10 minutes
 		$hour = date("H");
 	}
@@ -35,8 +35,7 @@ function parent_loop()
 	$shm_key = ftok(__FILE__, 'b');
 	$shm_id = shmop_open($shm_key, "w", 0, 0);
 	shmop_write($shm_id, 1, 0);#Locking
-	echo "[parent]: Gathering auctions...\n";
-	write_in_log("Gathering auctions...");
+	//echo "[parent]: Gathering auctions...\n";
 	$auctions = get_and_insert_auctions();
 	shmop_write($shm_id, 0, 0);#Unlocking
 	shmop_close($shm_id);
@@ -44,8 +43,7 @@ function parent_loop()
 	while(true)
 	{
 		sleep(300);//5 Minutes
-		echo "[parent]: Gathering auctions...\n";
-		write_in_log("Gathering auctions...");
+		//echo "[parent]: Gathering auctions...\n";
 		#TODO: manage $auctions == null -> auctions in pause
 		$shm_key = ftok(__FILE__, 'b');
 		$shm_id = shmop_open($shm_key, "w", 0, 0);
@@ -58,8 +56,7 @@ function parent_loop()
 
 function child_loop($iteration)
 {
-	echo "Started thread " . getmypid() . "\n";
-	write_in_log("Started thread");
+	//echo "Started thread " . getmypid() . "\n";
 	$max_auctions = 10;
 	$auctions_count = 0;
 	if($auctions_count < $max_auctions)#Need more auctions
@@ -72,7 +69,7 @@ function child_loop($iteration)
 		//If it is, just wait in the loop
 		while($updating_db_lock != 0)
 		{
-			echo "[" . getmypid() . "]: Sleeping, database being updated\n";
+			//echo "[" . getmypid() . "]: Sleeping, database being updated\n";
 			usleep(rand(300000,600000));#300-600 ms
 			$shm_key = ftok(__FILE__, 'b');
 			$shm_id = shmop_open($shm_key, "w", 0, 0);
@@ -81,14 +78,13 @@ function child_loop($iteration)
 		}
 		sleep($iteration*2);
 		$auction_needed = $max_auctions - $auctions_count;
-		echo "[" . getmypid() . "]: Retriving auctions to analize, need $auction_needed\n";
+		//echo "[" . getmypid() . "]: Retriving auctions to analize, need $auction_needed\n";
 		$res = query_to_bidoo_stats("SELECT a.name, a.id FROM auction_tracking as a WHERE a.assigned=0 AND a.terminated=0 ORDER BY a.name LIMIT $auction_needed");
 		$res = $res->fetch_all();
 
 		if(count($res) == 0)#No auctions aviable
 		{
-			echo "[" . getmypid() . "]: No free auctions, waiting...\n";
-			write_in_log("No free auctions, waiting...");
+			//echo "[" . getmypid() . "]: No free auctions, waiting...\n";
 			sleep(30);#Sleep 30 seconds
 		}
 		else#Some auctions aviable
@@ -105,14 +101,13 @@ function child_loop($iteration)
 			{
 				$name = $res[$i][0];
 				$state = create_table($name);
-				echo "[" . getmypid() . "]: Creating table for $name with result $state\n";
-				write_in_log("Created table for $name with result $state");
+				//echo "[" . getmypid() . "]: Creating table for $name with result $state\n";
 			}
 
 			$auctions_count += count($res);
-			echo "[" . getmypid() . "]: Starting analizing $auctions_count auctions\n";
+			//echo "[" . getmypid() . "]: Starting analizing $auctions_count auctions\n";
 			analize_auctions($res, $auctions_count, $max_auctions);
-			echo "[" . getmypid() . "]: Breaked, sleeping";
+			//echo "[" . getmypid() . "]: Breaked, sleeping";
 			sleep(10);
 		}
 	}

@@ -98,7 +98,7 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 				elseif(!is_array($res) && $res == "CLOSED")
 				{
 					#Auction closed
-					echo "[" . getmypid() . "]: Auction '$name' closed\n";
+					//echo "[" . getmypid() . "]: Auction '$name' closed\n";
 					$pos_to_delete[] = $i;				
 				}
 			}
@@ -131,23 +131,23 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 					$l->query("UPDATE auction_tracking SET auction_tracking.assigned=1 WHERE auction_tracking.name='$current'");
 				}
 				$l->close();
-				echo "[" . getmypid() . "]: Analizing $auctions_count, need $needed_auctions new auctions, receiving " . count($new_auctions) . "\n";
+				//echo "[" . getmypid() . "]: Analizing $auctions_count, need $needed_auctions new auctions, receiving " . count($new_auctions) . "\n";
 				foreach ($new_auctions as $key => $value) 
 				{
 					$state = create_table($value[0]);
-					echo "[" . getmypid() . "]: Creating table for $value[0] with result $state\n";
+					//echo "[" . getmypid() . "]: Creating table for $value[0] with result $state\n";
 					$aucions[] = $value;
 				}
 			}
 		}
 		else
 		{
-			echo "[" . getmygid() . "]: Auction in pause, sleeping...\n";
+			//echo "[" . getmygid() . "]: Auction in pause, sleeping...\n";
 			sleep(600);#Sleep 10 minutes
 		}	
 		$hour = date("H");	
 	}while($res != "BREAK");#Will never happen
-	echo "[" . getmypid() . "]: Breaked\n";
+	//echo "[" . getmypid() . "]: Breaked\n";
 }
 
 /*
@@ -250,11 +250,5 @@ function get_last_10($name)
 function get_stream_context($timer)
 {
 	return $ctx = stream_context_create(array('http'=>array('timeout' => $timer,)));
-}
-
-function write_in_log($msg)
-{
-	$msg = "[" . date("H:i:s") . "]: $msg\r";
-	file_put_contents("logs/" . getmypid() . ".txt", $msg, FILE_APPEND | LOCK_EX);
 }
 ?>
