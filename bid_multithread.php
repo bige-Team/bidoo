@@ -10,12 +10,12 @@ shmop_close($shm_id);
 
 for($i = 0; $i < 5; $i++)
 {
-	$hour = date("H");
+	$hour = date("H")+1;
 	while($hour >= 0 && $hour < 12)
 	{
 		echo "Auctions in pause " . $hour . "\n";
 		sleep(600);#Sleep 10 minutes
-		$hour = date("H");
+		$hour = date("H")+1;
 	}
 	$pid = pcntl_fork();
 	if($pid == -1)

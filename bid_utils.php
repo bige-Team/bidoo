@@ -52,7 +52,7 @@ function string_to_array($string, $separator)
 */
 function get_and_insert_auctions()
 {
-	$hour = date("H");
+	$hour = date("H")+1;
 	if(!($hour >= 0 && $hour < 12))
 	{
 		//Auctions running
@@ -77,7 +77,7 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 {
 	$res = "";
 	$pos_to_delete = array();
-	$hour = date("H");
+	$hour = date("H")+1;
 	do
 	{
 		if(!($hour >= 0 && $hour < 12))
@@ -145,7 +145,7 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 			//echo "[" . getmygid() . "]: Auction in pause, sleeping...\n";
 			sleep(600);#Sleep 10 minutes
 		}	
-		$hour = date("H");	
+		$hour = date("H")+1;	
 	}while($res != "BREAK");#Will never happen
 	//echo "[" . getmypid() . "]: Breaked\n";
 }
