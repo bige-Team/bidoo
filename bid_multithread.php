@@ -35,7 +35,8 @@ function parent_loop()
 	$shm_key = ftok(__FILE__, 'b');
 	$shm_id = shmop_open($shm_key, "w", 0, 0);
 	shmop_write($shm_id, 1, 0);#Locking
-	echo "[parent]: gathering auctions...\n";
+	echo "[parent]: Gathering auctions...\n";
+	write_in_log("Gathering auctions...");
 	$auctions = get_and_insert_auctions();
 	shmop_write($shm_id, 0, 0);#Unlocking
 	shmop_close($shm_id);
@@ -43,7 +44,8 @@ function parent_loop()
 	while(true)
 	{
 		sleep(300);//5 Minutes
-		echo "[parent]: gathering auctions...\n";
+		echo "[parent]: Gathering auctions...\n";
+		write_in_log("Gathering auctions...");
 		#TODO: manage $auctions == null -> auctions in pause
 		$shm_key = ftok(__FILE__, 'b');
 		$shm_id = shmop_open($shm_key, "w", 0, 0);
@@ -57,6 +59,7 @@ function parent_loop()
 function child_loop($iteration)
 {
 	echo "Started thread " . getmypid() . "\n";
+	write_in_log("Started thread");
 	$max_auctions = 10;
 	$auctions_count = 0;
 	if($auctions_count < $max_auctions)#Need more auctions
@@ -85,6 +88,7 @@ function child_loop($iteration)
 		if(count($res) == 0)#No auctions aviable
 		{
 			echo "[" . getmypid() . "]: No free auctions, waiting...\n";
+			write_in_log("No free auctions, waiting...");
 			sleep(30);#Sleep 30 seconds
 		}
 		else#Some auctions aviable
@@ -102,6 +106,7 @@ function child_loop($iteration)
 				$name = $res[$i][0];
 				$state = create_table($name);
 				echo "[" . getmypid() . "]: Creating table for $name with result $state\n";
+				write_in_log("Created table for $name with result $state");
 			}
 
 			$auctions_count += count($res);

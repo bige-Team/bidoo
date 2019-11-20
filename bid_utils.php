@@ -251,4 +251,10 @@ function get_stream_context($timer)
 {
 	return $ctx = stream_context_create(array('http'=>array('timeout' => $timer,)));
 }
+
+function write_in_log($msg)
+{
+	$msg = "[" . date("H:i:s") . "]: $msg\r";
+	file_put_contents("logs/" . getmypid() . ".txt", $msg, FILE_APPEND | LOCK_EX);
+}
 ?>
