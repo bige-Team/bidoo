@@ -13,7 +13,7 @@ for($i = 0; $i < 5; $i++)
 	$hour = date("H");
 	while($hour >= 0 && $hour < 12)
 	{
-		//echo "Auctions in pause " . $hour . "\n";
+		echo "Auctions in pause " . $hour . "\n";
 		sleep(600);#Sleep 10 minutes
 		$hour = date("H");
 	}
@@ -56,7 +56,7 @@ function parent_loop()
 
 function child_loop($iteration)
 {
-	//echo "Started thread " . getmypid() . "\n";
+	echo "Started thread " . getmypid() . "\n";
 	$max_auctions = 10;
 	$auctions_count = 0;
 	if($auctions_count < $max_auctions)#Need more auctions
