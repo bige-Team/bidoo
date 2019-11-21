@@ -1,1 +1,0 @@
-ssh -i "CP091qd.pem" ubuntu@ec2-3-134-117-93.us-east-2.compute.amazonaws.com
