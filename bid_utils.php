@@ -86,7 +86,7 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 			{ 
 				$name = $auctions[$i][0];
 				$id = $auctions[$i][1];
-				$s = @file_get_contents("https://it.bidoo.com/data.php?ALL=$id&LISTID=0", false, get_stream_context(1));//Set the timeout timer to 1, @ -> suppress wrning
+				$s = @file_get_contents("https://it.bidoo.com/data.php?ALL=$id&LISTID=0", false, get_stream_context(1));//Set the timeout timer to 1, @ -> suppress warning
 
 				$res = analize_page($s, $name);
 
@@ -103,19 +103,28 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 				}
 			}
 			//Remove the closed auctions from the array
-			$string = "";
 			for($i = 0; $i < count($pos_to_delete); $i++)
 			{
 				unset($auctions[$pos_to_delete[$i]]);
 				$auctions_count--;
-				$string .= " $i ";
 			}
 			$auctions_temp = array();
+			##!!!!!!##
+			if(count($pos_to_delete)>0)
+			{
+				echo "[" . getmypid() . "]: Auction before\n";
+				print_r($auctions);
+			}
 			foreach ($auctions as $key => $value)
 			{
 				$auctions_temp[] = $value;
 			}
 			$auctions = $auctions_temp;
+			if(count($pos_to_delete)>0)
+			{
+				echo "[" . getmypid() . "]: Auction after\n";
+				print_r($auctions);
+			}
 			$pos_to_delete = array();
 
 			//Get new auctions
@@ -136,8 +145,10 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 				{
 					$state = create_table($value[0]);
 					//echo "[" . getmypid() . "]: Creating table for $value[0] with result $state\n";
-					$aucions[] = $value;
+					$auctions[] = $value;
 				}
+				echo "[" . getmypid() . "]: Auction after new added\n";
+				print_r($auctions);
 			}
 		}
 		else
