@@ -109,22 +109,11 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 				$auctions_count--;
 			}
 			$auctions_temp = array();
-			##!!!!!!##
-			if(count($pos_to_delete)>0)
-			{
-				echo "[" . getmypid() . "]: Auction before\n";
-				print_r($auctions);
-			}
 			foreach ($auctions as $key => $value)
 			{
 				$auctions_temp[] = $value;
 			}
 			$auctions = $auctions_temp;
-			if(count($pos_to_delete)>0)
-			{
-				echo "[" . getmypid() . "]: Auction after\n";
-				print_r($auctions);
-			}
 			$pos_to_delete = array();
 
 			//Get new auctions
@@ -147,8 +136,6 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 					//echo "[" . getmypid() . "]: Creating table for $value[0] with result $state\n";
 					$auctions[] = $value;
 				}
-				echo "[" . getmypid() . "]: Auction after new added\n";
-				print_r($auctions);
 			}
 		}
 		else
