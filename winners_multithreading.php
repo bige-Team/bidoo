@@ -17,7 +17,7 @@ while(pcntl_waitpid(0, $status) != -1);
 
 function execute_code($val, $diff, $x)
 {
-	$link = new mysqli("127.0.0.1", "root", "", "bidoo");
+	$link = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
 	$cont = 0;
 	for($i = ($val - ($diff*($x+1))); $i < ($val - ($diff*$x)); $i++)
 	{
@@ -37,13 +37,13 @@ function execute_code($val, $diff, $x)
 				//echo $primo;
 				
 				$link->query("INSERT INTO winners VALUES ('$nome', $time, $puntate, '$tipo')");
-				echo "[$x]: inserted $nome auction $i\n";
+				//echo "[$x]: inserted $nome auction $i\n";
 				//sleep(rand(1,2));
 			}
 		}
 		if($cont >= 400)
 		{
-			sleep(3);
+			sleep(1);
 			$cont = 0;
 		}
 	}
