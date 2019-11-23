@@ -1,7 +1,7 @@
 <?php
 $val = 8714000; //8.714.000
 $diff = 10000; //10.000
-//set_time_limit(0);
+set_time_limit(0);
 for($i = 0; $i < 30; $i++)
 {
 	$pid = pcntl_fork();
@@ -17,7 +17,8 @@ while(pcntl_waitpid(0, $status) != -1);
 
 function execute_code($val, $diff, $x)
 {
-	$link = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
+	echo "Started " . getmypid() . "\n";
+	
 	$cont = 0;
 	for($i = ($val - ($diff*($x+1))); $i < ($val - ($diff*$x)); $i++)
 	{
@@ -35,9 +36,10 @@ function execute_code($val, $diff, $x)
 
 				$primo = $puntate.';'.$nome.';'.$time.';'.$tipo;
 				//echo $primo;
-				
-				$link->query("INSERT INTO winners VALUES ('$nome', $time, $puntate, '$tipo')");
-				//echo "[$x]: inserted $nome auction $i\n";
+				$link = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
+				$link->query("INSERT INTO winners VALUES ($i, '$nome', $time, $puntate, '$tipo')");
+				$link->close();
+				echo "[$x]: inserted $nome auction $i\n";
 				//sleep(rand(1,2));
 			}
 		}
@@ -46,7 +48,6 @@ function execute_code($val, $diff, $x)
 			sleep(1);
 			$cont = 0;
 		}
-	}
-	$link->close();
+	}	
 }
 ?>
