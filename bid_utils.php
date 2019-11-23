@@ -129,11 +129,11 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 					$l->query("UPDATE auction_tracking SET auction_tracking.assigned=1 WHERE auction_tracking.name='$current'");
 				}
 				$l->close();
-				//echo "[" . getmypid() . "]: Analizing $auctions_count, need $needed_auctions new auctions, receiving " . count($new_auctions) . "\n";
+				echo "[" . getmypid() . "]: Analizing $auctions_count, need $needed_auctions, receiving " . count($new_auctions) . " - " . date("H:i:s") . "\n";
 				foreach ($new_auctions as $key => $value) 
 				{
 					$state = create_table($value[0]);
-					//echo "[" . getmypid() . "]: Creating table for $value[0] with result $state\n";
+					echo "[" . getmypid() . "]: Creating table for $value[0] with result $state - " . date("H:i:s") . "\n";
 					$auctions[] = $value;
 				}
 			}
