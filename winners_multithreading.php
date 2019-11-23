@@ -6,7 +6,7 @@ include_once "mysql_utils.php";
 //$diff = 10000; //10.000
 $n_thread = 20;
 set_time_limit(0);
-for($i = 0; $i < $n_thread; $i++)
+for($i = 1; $i < $n_thread-1; $i++)
 {
 	$pid = pcntl_fork();
 	if($pid == -1)
@@ -29,7 +29,7 @@ function child_loop($n_thread, $index)
 		if(FALSE === $s)
 		{
 			//Stream failed
-			echo "[" . getmypid() . "]: Breaked " . date("H:i:s") . "\n";
+			echo "[" . getmypid() . "]: Failed stream with $index - " . date("H:i:s") . "\n";
 			break;
 		}
 		else if(strpos($s, 'OFF') == true) 
