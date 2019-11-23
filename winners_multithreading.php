@@ -19,7 +19,7 @@ exit();
 
 function child_loop($n_thread, $index)
 {
-	$link = connect_to_stats();
+	
 	
 	while(true)
 	{
@@ -42,7 +42,9 @@ function child_loop($n_thread, $index)
 				$time = $fine[2];
 				$tipo = $fine[5];
 
-				$link->query("INSERT INTO winners VALUES ($index, '$nome', $time, $puntate, '$tipo')");		
+				$link = connect_to_stats();
+				$link->query("INSERT INTO winners VALUES ($index, '$nome', $time, $puntate, '$tipo')");
+				$link->close();
 				echo "[" . getmypid() . "]: Inserted winner for $index\n";		
 				$index += $n_thread;
 			}
@@ -59,6 +61,5 @@ function child_loop($n_thread, $index)
 			exit();
 		}
 	}
-	$link->close();
 }
 ?>
