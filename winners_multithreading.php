@@ -2,11 +2,9 @@
 include_once "bid_utils.php";
 include_once "mysql_utils.php";
 
-//$val = 8714000; //8.714.000
-//$diff = 10000; //10.000
-$n_thread = 20;
+$n_thread = 10;
 set_time_limit(0);
-for($i = 1; $i < $n_thread-1; $i++)
+for($i = 1; $i <= $n_thread; $i++)
 {
 	$pid = pcntl_fork();
 	if($pid == -1)
@@ -34,7 +32,7 @@ function child_loop($n_thread, $index)
 		}
 		else if(strpos($s, 'OFF') == true) 
 		{
-			//echo 'asta finita';
+			//Auction finished
 			$fine = explode(';', $s);
 
 			$nome = $fine[4];
@@ -44,9 +42,15 @@ function child_loop($n_thread, $index)
 				$time = $fine[2];
 				$tipo = $fine[5];
 
-				$link->query("INSERT INTO winners VALUES ($index, '$nome', $time, $puntate, '$tipo')");				
+				$link->query("INSERT INTO winners VALUES ($index, '$nome', $time, $puntate, '$tipo')");		
+				echo "[" . getmypid() . "]: Inserted winner for $index\n";		
 				$index += $n_thread;
 			}
+		}
+		else if(strpos($s, 'ON') == true) 
+		{
+			//Auction running
+			echo "[" . getmypid() . "]: Auction $index running\n";
 		}
 		else
 		{
