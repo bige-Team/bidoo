@@ -12,13 +12,12 @@ for($i = 0; $i < $n_thread; $i++)
 	if($pid == -1)
 		die("Error forking...\n");
 	elseif($pid == 0){
-		//execute_code($val, $diff, $i);
 		child_loop($n_thread, $i);
 		exit();
 	}
 }
-
-while(pcntl_waitpid(0, $status) != -1);
+exit();
+//while(pcntl_waitpid(0, $status) != -1);
 
 function child_loop($n_thread, $index)
 {
@@ -45,15 +44,14 @@ function child_loop($n_thread, $index)
 				$time = $fine[2];
 				$tipo = $fine[5];
 
-				$primo = $puntate.';'.$nome.';'.$time.';'.$tipo;
 				$link->query("INSERT INTO winners VALUES ($index, '$nome', $time, $puntate, '$tipo')");				
-				//echo "[$x]: inserted $nome auction $i\n";
 				$index += $n_thread;
 			}
 		}
 		else
 		{
-			die("Reached the end");
+			$msg = "[" . getmypid() . "]: Reached the end with $index\n";
+			die($msg);
 			exit();
 		}
 	}
