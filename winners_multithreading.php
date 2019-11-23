@@ -46,7 +46,7 @@ function child_loop($n_thread, $index)
 				$tipo = $fine[5];
 
 				$primo = $puntate.';'.$nome.';'.$time.';'.$tipo;
-				$link->query("INSERT INTO winners VALUES ($i, '$nome', $time, $puntate, '$tipo')");				
+				$link->query("INSERT INTO winners VALUES ($index, '$nome', $time, $puntate, '$tipo')");				
 				//echo "[$x]: inserted $nome auction $i\n";
 				$index += $n_thread;
 			}
