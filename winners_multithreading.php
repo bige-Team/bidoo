@@ -18,11 +18,10 @@ while(pcntl_waitpid(0, $status) != -1);
 function execute_code($val, $diff, $x)
 {
 	echo "Started " . getmypid() . "\n";
-	
-	$cont = 0;
+	$link = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
+
 	for($i = ($val - ($diff*($x+1))); $i < ($val - ($diff*$x)); $i++)
 	{
-		$cont++;
 		$s = file_get_contents('https://it.bidoo.com/data.php?ALL='.$i.'&LISTID=0');
 		if(strpos($s, 'OFF') == true) {
 			//echo 'asta finita';
@@ -35,19 +34,12 @@ function execute_code($val, $diff, $x)
 				$tipo = $fine[5];
 
 				$primo = $puntate.';'.$nome.';'.$time.';'.$tipo;
-				//echo $primo;
-				$link = new mysqli("127.0.0.1", "root", "", "bidoo_stats");
-				$link->query("INSERT INTO winners VALUES ($i, '$nome', $time, $puntate, '$tipo')");
-				$link->close();
-				echo "[$x]: inserted $nome auction $i\n";
-				//sleep(rand(1,2));
+				//echo $primo;				
+				$link->query("INSERT INTO winners VALUES ($i, '$nome', $time, $puntate, '$tipo')");				
+				//echo "[$x]: inserted $nome auction $i\n";
 			}
 		}
-		if($cont >= 400)
-		{
-			sleep(1);
-			$cont = 0;
-		}
 	}	
+	$link->close();
 }
 ?>
