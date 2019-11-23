@@ -1,13 +1,8 @@
 <?php
-for($i = 0; $i < 5; $i++)
+$s = @file_get_contents("asdasdad");
+if(FALSE === $s)
 {
-	$pid = pcntl_fork();
-	if($pid == 0)
-	{
-		$s = getmypid() . " ". date("H:i:s") . "\r";
-		file_put_contents("logs/" . getmypid() . ".txt", $s, FILE_APPEND | LOCK_EX);
-		exit();
-	}
+	//Stream failed
+	echo "ciao";
 }
-
 ?>

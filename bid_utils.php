@@ -144,8 +144,7 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 			sleep(600);#Sleep 10 minutes
 		}	
 		$hour = date("H")+1;	
-	}while($res != "BREAK");#Will never happen
-	//echo "[" . getmypid() . "]: Breaked\n";
+	}while(true);
 }
 
 /*
