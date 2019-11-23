@@ -211,7 +211,7 @@ function analize_page($s, $name)
 		$winner = $puntate.';'.$nome.';'.$time.';'.$tipo;
 		insert_line($name, $winner);
 
-		query_to_bidoo_stats("UPDATE auction_tracking as a SET a.terminated=1 WHERE a.name='$name'");
+		query_to_bidoo_stats("UPDATE auction_tracking as a SET a.terminated=1, a.assigned=0 WHERE a.name='$name'");
 		return "CLOSED";
 	}
 	else 
