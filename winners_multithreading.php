@@ -26,7 +26,7 @@ function child_loop($n_thread, $index, $ctx)
 	//echo "Started " . getmypid() . "\n";
 	while(true)
 	{
-		$s = file_get_contents("https://it.bidoo.com/data.php?ALL=$index&LISTID=0", false, $ctx);
+		$s = @file_get_contents("https://it.bidoo.com/data.php?ALL=$index&LISTID=0", false, $ctx);
 		if(FALSE === $s)
 		{
 			//Stream failed
@@ -58,8 +58,8 @@ function child_loop($n_thread, $index, $ctx)
 		}
 		else
 		{
-			echo "[" . getmypid() . "]: Reached the end with $index\n";
-			exit();
+			//echo "[" . getmypid() . "]: Reached the end with $index\n";
+			//exit();
 		}
 		$index += $n_thread;
 	}
