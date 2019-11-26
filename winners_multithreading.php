@@ -1,6 +1,6 @@
 <?php
 include_once "mysql_utils.php";
-
+$offset = 1487842;
 $n_thread = 20;
 $opts = array('http'=>array('timeout'=>1,));
 $ctx = stream_context_create($opts);
@@ -11,7 +11,7 @@ for($i = 1; $i <= $n_thread; $i++)
 	if($pid == -1)
 		die("Error forking...\n");
 	elseif($pid == 0){
-		child_loop($n_thread, $i, $ctx);
+		child_loop($n_thread, $i+$offset, $ctx);
 		exit();
 	}
 }
