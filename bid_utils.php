@@ -87,6 +87,7 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 				$name = $auctions[$i][0];
 				$id = $auctions[$i][1];
 				$s = @file_get_contents("https://it.bidoo.com/data.php?ALL=$id&LISTID=0", false, get_stream_context(1));//Set the timeout timer to 1, @ -> suppress warning
+				
 
 				$res = analize_page($s, $name);
 

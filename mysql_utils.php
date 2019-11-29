@@ -198,51 +198,5 @@ function analize_database($table)
 	echo "</table>";
 
 	print_r($id_utenti);
-	//DIFFERENZA TEMPO
-	/*
-	$res = query("SELECT id_utente, time_stamp FROM " . $table . " ORDER BY time_stamp ASC");
-	$time = [];
-	$i = 0;
-	foreach ($res->fetch_all() as $key => $value)
-	{
-		$time[$i++] = $value[1];
-	}
-	print_r($time);
-	echo "<br>";
-	for ($i=count($time)-1; $i >= 0; $i--)
-	{
-		if($i > 0)
-			$time[$i] = $time[$i] - $time[$i-1];
-	}
-	print_r($time);
-	*/
 }
-
-
-
-
-//create_table("ciao");
-/*
-insert_line("ciao", "231;giannimario;193028374;3");
-insert_line("324;ivan;193028374;1");
-insert_line("45;osanna;193028389;1");
-insert_line("65;rinogino;193028390;3");
-*/
-
-/*
-PRELEVAMENTO DI DATI DAL DATABASE
-$res = query("SELECT id_utente FROM bidoo_data");
-if($res->num_rows > 0)
-{
-	while($row = $res->fetch_assoc())
-	{
-		echo "id = " . $row["id_utente"];
-	}
-}
-else
-	echo "0 results";
-
-INSERIMENTO NEL DATABASE DI DATI
-$res = query("INSERT INTO bidoo_data (id_utente) VALUES ('giovanni')");
-*/
 ?>
