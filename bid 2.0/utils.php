@@ -3,7 +3,7 @@
 function connect() {
 	//$link = new mysqli("sql7.freemysqlhosting.net", "sql7308522", "bCQvsAUzMS", "sql7308522");
 	//$link = new mysqli("localhost", "root", "Rt9du2pg", "bidoo");
-	$link = new mysqli("localhost", "root", "", "bidoo");
+	$link = new mysqli("127.0.0.1", "root", "", "bidoo");
 	if (mysqli_connect_errno()) 
 	{
 		printf("linkect failed: %s\n", mysqli_connect_error());
