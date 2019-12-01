@@ -1,2 +1,0 @@
-SMTP -> tcp.port = 465 and not tls
-IMAP -> tcp.port == 993 and not tls and tcp.dstport != 993
