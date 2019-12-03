@@ -139,7 +139,7 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 					echo "[" . getmypid() . "]: Creating table for $value[0] with result $state - " . date("H:i:s") . "\n";
 					$auctions[] = $value;
 				}
-			}
+			//}
 			//else
 			//{
 				//#Need no more auctions
