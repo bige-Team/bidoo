@@ -166,7 +166,7 @@ function get_table_names_from_autcion_tracking()
 	$names = array();
 	foreach ($res as $key => $value) 
 	{
-		$names[] = $value;
+		$names[] = $value[0];
 	}
 	return $names;
 }
