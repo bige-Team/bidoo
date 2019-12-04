@@ -161,7 +161,7 @@ function get_table_names()
 
 function get_table_names_from_autcion_tracking()
 {
-	$res = query_to_bidoo_stats("SELECT a.name FROM auction_tracking AS a WHERE a.analized = 0");
+	$res = query_to_bidoo_stats("SELECT a.name FROM auction_tracking AS a WHERE a.analized = 0 AND a.terminated = 1");
 	$res = $res->fetch_all();
 	$names = array();
 	foreach ($res as $key => $value) 
