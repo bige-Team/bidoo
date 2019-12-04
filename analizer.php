@@ -58,7 +58,7 @@ if(isset($_POST['createBidoo']))
 //TODO: CONTROLLARE CHE L'ASTA SIA FINITA E AGGIORNARE LA TABELLA auction_tracking
 function update_user_rank()
 {	
-	$table_names = get_table_names();
+	$table_names = get_table_names_from_autcion_tracking();
 	for ($i=0; $i < count($table_names); $i++) 
 	{
 		$res = query("SELECT DISTINCT id_utente FROM $table_names[$i]");
@@ -67,6 +67,12 @@ function update_user_rank()
 		{ 
 			$arr[$table_names[$i]][$j] = $res[$j][0];
 		}
+	}
+
+	//Aggiorno il auction_tracking
+	for ($i=0; $i < count($table_names); $i++) 
+	{ 
+		query_to_bidoo_stats("UPDATE auction_tracking SET analized = 1 WHERE name = '$table_names[$i]'");
 	}
 
 	//prende i dati delle puntate usate e delle aste partecipate

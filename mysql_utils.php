@@ -159,6 +159,18 @@ function get_table_names()
 	return $names;
 }
 
+function get_table_names_from_autcion_tracking()
+{
+	$res = query_to_bidoo_stats("SELECT a.name FROM auction_tracking AS a WHERE a.analized = 0");
+	$res = $res->fetch_all();
+	$names = array();
+	foreach ($res as $key => $value) 
+	{
+		$names[] = $value;
+	}
+	return $names;
+}
+
 function analize_database($table)
 {
 	$id_utenti = [];
