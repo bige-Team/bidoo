@@ -43,14 +43,13 @@ function parent_loop()
 	while(true)
 	{
 		sleep(60);//1 Minutes
-		echo "[parent]: Gathering auctions...";
+		echo "[parent]: Gathering auctions..." . date("H:i:s") . "\n";
 		$shm_key = ftok(__FILE__, 'b');
 		$shm_id = shmop_open($shm_key, "w", 0, 0);
 		shmop_write($shm_id, 1, 0);//Locking
 		$auctions = get_and_insert_auctions();
 		shmop_write($shm_id, 0, 0);//Unlocking
 		shmop_close($shm_id);
-		echo " found " . count($auctions) . "\n";
 	}
 }
 

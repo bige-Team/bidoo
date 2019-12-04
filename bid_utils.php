@@ -99,7 +99,7 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 				elseif(!is_array($res) && $res == "CLOSED")
 				{
 					#Auction closed
-					//echo "[" . getmypid() . "]: Auction '$name' closed\n";
+					echo "[" . getmypid() . "]: Auction $name closed" . date("H:i:s") . "\n";
 					$pos_to_delete[] = $i;				
 				}
 			}
@@ -109,18 +109,20 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 				unset($auctions[$pos_to_delete[$i]]);
 				$auctions_count--;
 			}
+			$auctions_temp = null;
 			$auctions_temp = array();
 			foreach ($auctions as $key => $value)
 			{
 				$auctions_temp[] = $value;
 			}
 			$auctions = $auctions_temp;
+			$pos_to_delete = null;
 			$pos_to_delete = array();
 
 			//Get new auctions
 			$needed_auctions = $max_auctions - $auctions_count;
-			if($needed_auctions < $max_auctions)
-			{
+			//if($needed_auctions < $max_auctions)
+			//{
 				$new_auctions = query_to_bidoo_stats("SELECT a.name, a.id FROM auction_tracking as a WHERE a.assigned=0 AND a.terminated=0 ORDER BY a.name LIMIT $needed_auctions");
 				$new_auctions = $new_auctions->fetch_all();
 				$l = connect_to_stats();
@@ -137,7 +139,13 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 					echo "[" . getmypid() . "]: Creating table for $value[0] with result $state - " . date("H:i:s") . "\n";
 					$auctions[] = $value;
 				}
-			}
+			//}
+			//else
+			//{
+				//#Need no more auctions
+				//echo "[" . getmypid() . "]: Auction count $auctions_count - " . date("H:i:s") . "\n";
+
+			//}
 		}
 		else
 		{
