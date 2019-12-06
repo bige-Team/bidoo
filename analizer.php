@@ -4,8 +4,8 @@
 	<br><br>
 	<button name="fill">Fill stats table</button> 
 	<button name="empty">Empty stats table</button>
-	<button name="dropBidoo">Drop bidoo</button>
-	<button name="createBidoo">Create bidoo</button>
+	<!--<button name="dropBidoo">Drop bidoo</button>
+	<button name="createBidoo">Create bidoo</button>-->
 </form>
 
 <?php
@@ -17,18 +17,25 @@ if(isset($_POST['btnOK']))
 	$table_names = get_table_names();
 	$n_puntate = 0;
 	$n_tabelle = 0;
+	$tables = ""; #Nomi aste partecipate
 
 	for ($i=0; $i < count($table_names); $i++) 
 	{ 
-		$res = query("SELECT COUNT(n_puntate) FROM " . $table_names[$i] . " WHERE id_utente='" . $id_utente . "'");
+		$res = query("SELECT COUNT(n_puntate) FROM " . $table_names[$i] . " WHERE id_utente='$id_utente'");
 		$res = $res->fetch_all()[0][0];
 		if($res > 0)
 		{
 			$n_puntate += $res;
 			$n_tabelle++;
+			$tables .= $table_names . " ";
 		}
 	}
 	echo "<b>" . $id_utente . "</b> con <b>" . $n_puntate . "</b> puntate in <b> " . $n_tabelle . "</b> tabella/e";
+	$user_tables_name = explode(' ', $tables);
+	for ($i=0; $i < count($user_tables_name); $i++) 
+	{ 
+		echo "<a href='adviser.php?name=$user_tables_name[$i]'></a><br>";
+	}
 }
 
 if(isset($_POST['fill']))
@@ -54,8 +61,7 @@ if(isset($_POST['createBidoo']))
 	query_to_bidoo_stats("CREATE DATABASE bidoo");
 	echo "CREATE on database bidoo";
 }
-
-//TODO: CONTROLLARE CHE L'ASTA SIA FINITA E AGGIORNARE LA TABELLA auction_tracking
+auction_tracking
 function update_user_rank()
 {	
 	$table_names = get_table_names_from_autcion_tracking();
@@ -103,88 +109,15 @@ function update_user_rank()
 	//print_r($user_infos);
 
 	//li scrivo nella tabella user_ranking
-	$link = new mysqli("localhost", "root", "", "bidoo_stats");
+	$link = connect_to_stats();
 	foreach ($user_infos as $key => $value) 
 	{
-		
 		$link->query("INSERT INTO users_ranking (id_utente, puntate_usate, aste_partecipate) 
 					 VALUES ('$key', $value[puntate_usate], ". count($value['aste_partecipate']) . ") 
 					 ON DUPLICATE KEY UPDATE puntate_usate = puntate_usate + $value[puntate_usate], 
 					 aste_partecipate = aste_partecipate + ". count($value['aste_partecipate']));
-		
 		//echo $key . " => " . $value['puntate_usate'] . " - " . count($value['aste_partecipate']) . "<br>";
 	}
 	$link->close();
-	
-
-
-	/*
-	//Generazione query
-	$table_names = get_table_names();
-	$get_names_query = "SELECT DISTINCT id_utente FROM (";
-	for ($i=0; $i < count($table_names); $i++) 
-	{
-		$get_names_query .= "SELECT id_utente FROM bidoo." . $table_names[$i] . " ";
-		if($i != count($table_names)-1)
-			$get_names_query .= " UNION ";
-	}
-	$get_names_query .= ") as id_utente";
-
-	//SELECT di tutti gli utenti e INSERT nella table users_ranking
-	$all_users = query($get_names_query);
-	$all_users = $all_users->fetch_all(); //tutti gli utenti
-	$link = new mysqli("localhost", "root", "Rt9du2pg", "bidoo_stats");
-	for ($i=0; $i < count($all_users); $i++)
-	{ 
-		$id_utente = $all_users[$i][0];
-		$link->query("INSERT INTO users_ranking (id_utente) VALUES ('" . $id_utente . "')");
-	}
-	$link->close();
-	*/
-
-	/*
-		+-------------------+
-		|	DA OTTIMIZZARE	|
-		+-------------------+
-	*/
-
-	/*
-	$query = "SELECT SUM(t) FROM (";
-	for ($i=0; $i < count($all_users); $i++) 
-	{
-		for ($j=0; $j < count($table_names); $j++) 
-		{
-			$user = $all_users[$i][0];
-			$query .= "SELECT COUNT(id_utente) AS " . $user . " FROM " . $table_names[$j] . " WHERE id_utente='" . $user . "'";
-			if($i != count($all_users)-1)
-				$query .= " UNION ";
-		}
-	}
-	$query .= ") AS t";
-	
-	$result = query($query);
-
-	$result = $result->fetch_all();
-	print_r($result);
-	*/
-
-	/*
-	$link = connect();
-	for ($i=0; $i < count($table_names); $i++) 
-	{
-		for ($j=0; $j < count($all_users); $j++) 
-		{
-			$res = $link->query("SELECT COUNT(id_utente) FROM " . $table_names[$i] . " WHERE id_utente='" . $all_users[$j][0] . "'");
-			$res = $res->fetch_all();
-			//echo $all_users[$j][0] . " -> " . $res[0][0] . "<br>";
-			if($res[0][0] != 0)
-			{
-				query_to_bidoo_stats("UPDATE users_ranking SET puntate_usate = (SELECT puntate_usate (SELECT * FROM users_ranking) as t WHERE id_utente='" . $all_users[$j][0] . "') + " . $res[0][0] . " WHERE id_utente='" . $all_users[$j][0] . "'");
-			}
-		}
-	}
-	$link->close();
-	*/
-
 }
 ?>

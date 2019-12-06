@@ -1,4 +1,4 @@
 <?php
-include "mysql_utils.php";
-print_r(get_table_names_from_autcion_tracking());
+$date = date("Y-m-d H:i:s", 1575392516);
+echo $date . "\n";
 ?>
