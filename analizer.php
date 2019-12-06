@@ -32,10 +32,10 @@ if(isset($_POST['btnOK']))
 	}
 	echo "<b>" . $id_utente . "</b> con <b>" . $n_puntate . "</b> puntate in <b> " . $n_tabelle . "</b> tabella/e";
 	$user_tables_name = explode(' ', $tables);
-	print_r($user_tables_name);
+	array_pop($user_tables_name);
 	for ($i=0; $i < count($user_tables_name); $i++) 
 	{ 
-		echo "<a href='adviser.php?name=$user_tables_name[$i]'></a><br>";
+		echo "<a href='adviser.php?name=$user_tables_name[$i]' target='blank'>$user_tables_name[$i]</a><br>";
 	}
 }
 
