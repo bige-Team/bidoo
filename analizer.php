@@ -30,7 +30,7 @@ if(isset($_POST['btnOK']))
 			$tables .= $table_names[$i] . " ";
 		}
 	}
-	echo "<b>" . $id_utente . "</b> con <b>" . $n_puntate . "</b> puntate in <b> " . $n_tabelle . "</b> tabella/e";
+	echo "<b>" . $id_utente . "</b> con <b>" . $n_puntate . "</b> puntate in <b> " . $n_tabelle . "</b> tabella/e<br><br>";
 	$user_tables_name = explode(' ', $tables);
 	array_pop($user_tables_name);
 	for ($i=0; $i < count($user_tables_name); $i++) 
