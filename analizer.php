@@ -61,7 +61,7 @@ if(isset($_POST['createBidoo']))
 	query_to_bidoo_stats("CREATE DATABASE bidoo");
 	echo "CREATE on database bidoo";
 }
-auction_tracking
+
 function update_user_rank()
 {	
 	$table_names = get_table_names_from_autcion_tracking();
