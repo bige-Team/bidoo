@@ -27,7 +27,7 @@ if(isset($_POST['btnOK']))
 		{
 			$n_puntate += $res;
 			$n_tabelle++;
-			$tables .= $table_names . " ";
+			$tables .= $table_names[$i] . " ";
 		}
 	}
 	echo "<b>" . $id_utente . "</b> con <b>" . $n_puntate . "</b> puntate in <b> " . $n_tabelle . "</b> tabella/e";
