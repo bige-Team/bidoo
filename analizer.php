@@ -3,7 +3,7 @@
 	<button name="btnOK">OK</button>
 	<br><br>
 	<button name="fill">Fill stats table</button> 
-	<button name="empty">Empty stats table</button>
+	<button name="empty" disabled="true">Empty stats table</button>
 	<!--<button name="dropBidoo">Drop bidoo</button>
 	<button name="createBidoo">Create bidoo</button>-->
 </form>
