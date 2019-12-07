@@ -42,6 +42,6 @@ if(isset($_REQUEST['btnOK']))
 		$avg_price += $val;
 	}
 	$avg_price /= count($all_prices);
-	echo "<br><b>PREZZO MEDIO PER $product $value: </b> $avg_price<br>";
+	echo "<br><b>PREZZO MEDIO PER $product $value: </b>". round($avg_price, 2) . " EURO<br>";
 }
 ?>
