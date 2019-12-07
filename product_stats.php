@@ -62,7 +62,7 @@ if(isset($_REQUEST['btnOK']) && isset($_REQUEST['value']))
 				}
 			}
 		}
-		foreach ($group_by_time as $val => $hour)
+		foreach ($group_by_time as $hour => $val)
 		{
 			if(count($val) > 0)
 			{
