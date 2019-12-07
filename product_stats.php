@@ -13,13 +13,12 @@ if(isset($_REQUEST['btnOK']))
 	$l = connect_to_stats();
 	$res = $l->query("SELECT
 					    a.name,
-					    a.id,
-					    a.terminated
+					    a.id
 					FROM
 					    auction_tracking AS a
 					WHERE
-					    ((a.name like %amazon%)
-					    AND (a.name like %10\_%))
+					    ((a.name like '%amazon%')
+					    AND (a.name like '%10\_%'))
 					    AND a.terminated = 1");
 	$l->close();
 	$res = $res->fetch_all();
