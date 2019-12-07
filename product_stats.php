@@ -5,7 +5,7 @@
 </form>
 
 <?php
-if(isset($_REQUEST['btnOK']) && isset($_REQUEST['value']))
+if(isset($_REQUEST['btnOK']))
 {
 	include "mysql_utils.php";
 	$product = $_REQUEST['product'];
