@@ -41,7 +41,7 @@ if(isset($_REQUEST['btnOK']))
 	$l->close();
 	if(count($all_prices) != 0)
 	{
-		echo "<br><b>PRODOTTO $product $value</b><br>";
+		echo "<br><b>PRODOTTO $product $value VALUTATO SU " . count($all_prices) . "</b><br>";
 		$avg_price = 0;
 		foreach ($all_prices as $val)
 		{
@@ -50,6 +50,7 @@ if(isset($_REQUEST['btnOK']))
 		$avg_price = ($avg_price/count($all_prices))/100;
 		echo "<br><b>PREZZO MEDIO: </b>". round($avg_price, 2) . " EURO<br>";
 
+		//No sense because auctions stop for 12 hours!
 		$avg_timestamp = 0;
 		foreach ($all_timestamp as $val)
 		{
@@ -59,6 +60,6 @@ if(isset($_REQUEST['btnOK']))
 		echo "<b>ORA MEDIA VINCITA: </b>". date("H:i:s", $avg_timestamp) . "<br>";
 	}
 	else
-	echo "<br><b>PRODOTTO NON TROVATO!</b><br>";	
+		echo "<br><b>PRODOTTO NON TROVATO!</b><br>";	
 }
 ?>
