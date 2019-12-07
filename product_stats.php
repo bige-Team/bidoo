@@ -1,4 +1,3 @@
-<link rel="stylesheet" type="text/css" href="style.css">
 <form>
 	<input type="text" name="product" placeholder="Product Name">
 	<input type="number" name="value" placeholder="Value">
