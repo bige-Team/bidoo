@@ -22,14 +22,13 @@ if(isset($_REQUEST['btnOK']))
 					    and (`a`.`name` like '%$value\_%'))");
 	$l->close();
 	$res = $res->fetch_all();
-	print_r($res);
 
 	$l = connect();
 	$all_prices = array();
-	foreach ($res as $key => $value)
+	foreach ($res as $key => $val)
 	{
-		$table_name = $value[0];
-		$is_terminated = $value[2];
+		$table_name = $val[0];
+		$is_terminated = $val[2];
 		if($is_terminated == TRUE)
 		{
 			$res = $l->query("SELECT n_puntate FROM $table_name ORDER BY n_puntate DESC LIMIT 1");
@@ -43,8 +42,6 @@ if(isset($_REQUEST['btnOK']))
 		$avg_price += $val;
 	}
 	$avg_price /= count($all_prices);
-	echo "<br><b>PREZZO MEDIO PER $product $value: </b> $avg_price EURO<br>";
+	echo "<br><b>PREZZO MEDIO PER $product $value: </b> $avg_price<br>";
 }
-
-
 ?>
