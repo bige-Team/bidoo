@@ -54,6 +54,6 @@ if(isset($_REQUEST['btnOK']))
 		$avg_timestamp += $val;
 	}
 	$avg_timestamp /= count($all_timestamp);
-	echo "<b>ORA MEDIA PER: </b>". data("h:i:s", $avg_timestamp) . " EURO<br>";
+	echo "<b>ORA MEDIA PER: </b>". date("h:i:s", $avg_timestamp) . " EURO<br>";
 }
 ?>
