@@ -12,15 +12,14 @@ if(isset($_REQUEST['btnOK']))
 	$value = $_REQUEST['value'];
 	$l = connect_to_stats();
 	$res = $l->query("SELECT
-					    a.name,
-					    a.id,
-					    a.terminated
-					FROM
-					    auction_tracking AS a
-					WHERE
-					    ((a.name like '%amazon%')
-					    AND (a.name like '%10\_%'))
-					    AND a.terminated = 1");
+					    `a`.`name` AS `name`,
+					    `a`.`id` AS `id`
+					from
+					    `auction_tracking` `a`
+					where
+					    ((`a`.`name` like '%amazon%')
+					    and (`a`.`name` like '%10\_%')
+					    and (`a`.`terminated` = 1))");
 	$l->close();
 	$res = $res->fetch_all();
 
@@ -42,11 +41,7 @@ if(isset($_REQUEST['btnOK']))
 	$l->close();
 	if(count($all_prices) != 0)
 	{
-<<<<<<< HEAD
 		echo "<br><b>PRODOTTO $product $value VALUTATO SU " . count($all_prices) . " ASTE</b><br>";
-=======
-		echo "<br><b>PRODOTTO $product $value</b><br>";
->>>>>>> parent of e9b00cc... .
 		$avg_price = 0;
 		foreach ($all_prices as $val)
 		{
@@ -54,7 +49,6 @@ if(isset($_REQUEST['btnOK']))
 		}
 		$avg_price = ($avg_price/count($all_prices))/100;
 		echo "<br><b>PREZZO MEDIO: </b>". round($avg_price, 2) . " EURO<br>";
-<<<<<<< HEAD
 		/*
 		$group_by_time = array();
 		for($i=12; $i < 24; $i++)
@@ -68,11 +62,6 @@ if(isset($_REQUEST['btnOK']))
 			}
 		}
 		foreach ($group_by_time as $hour => $val)
-=======
-
-		$avg_timestamp = 0;
-		foreach ($all_timestamp as $val)
->>>>>>> parent of e9b00cc... .
 		{
 			if(count($val) > 0)
 			{
@@ -89,6 +78,6 @@ if(isset($_REQUEST['btnOK']))
 		*/
 	}
 	else
-	echo "<br><b>PRODOTTO NON TROVATO!</b><br>";	
+		echo "<br><b>PRODOTTO NON TROVATO!</b><br>";	
 }
 ?>
