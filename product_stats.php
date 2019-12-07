@@ -39,21 +39,26 @@ if(isset($_REQUEST['btnOK']))
 		}
 	}
 	$l->close();
-	echo "<br><b>PRODOTTO $product $value</b><br>";
-	$avg_price = 0;
-	foreach ($all_prices as $val)
+	if(count($all_prices) != 0)
 	{
-		$avg_price += $val;
-	}
-	$avg_price = ($avg_price/count($all_prices))/100;
-	echo "<br><b>PREZZO MEDIO: </b>". round($avg_price, 2) . " EURO<br>";
+		echo "<br><b>PRODOTTO $product $value</b><br>";
+		$avg_price = 0;
+		foreach ($all_prices as $val)
+		{
+			$avg_price += $val;
+		}
+		$avg_price = ($avg_price/count($all_prices))/100;
+		echo "<br><b>PREZZO MEDIO: </b>". round($avg_price, 2) . " EURO<br>";
 
-	$avg_timestamp = 0;
-	foreach ($all_timestamp as $val)
-	{
-		$avg_timestamp += $val;
+		$avg_timestamp = 0;
+		foreach ($all_timestamp as $val)
+		{
+			$avg_timestamp += $val;
+		}
+		$avg_timestamp /= count($all_timestamp);
+		echo "<b>ORA MEDIA VINCITA: </b>". date("H:i:s", $avg_timestamp) . "<br>";
 	}
-	$avg_timestamp /= count($all_timestamp);
-	echo "<b>ORA MEDIA PER: </b>". date("H:i:s", $avg_timestamp) . "<br>";
+	else
+	echo "<br><b>PRODOTTO NON TROVATO!</b><br>";	
 }
 ?>
