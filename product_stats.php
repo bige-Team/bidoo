@@ -25,23 +25,35 @@ if(isset($_REQUEST['btnOK']))
 
 	$l = connect();
 	$all_prices = array();
+	$all_timestamp = array();
 	foreach ($res as $key => $val)
 	{
 		$table_name = $val[0];
 		$is_terminated = $val[2];
 		if($is_terminated == TRUE)
 		{
-			$res = $l->query("SELECT n_puntate FROM $table_name ORDER BY n_puntate DESC LIMIT 1");
-			$all_prices[] = $res->fetch_all()[0][0];
+			$res = $l->query("SELECT n_puntate, time_stamp FROM $table_name ORDER BY n_puntate DESC LIMIT 1");
+			$res = $res->fetch_all();
+			$all_prices[] = $res[0][0];
+			$all_timestamp[] = $res[0][1];
 		}
 	}
 	$l->close();
+	echo "<br><b>PRODOTTO $product $value</b><br>";
 	$avg_price = 0;
 	foreach ($all_prices as $val)
 	{
 		$avg_price += $val;
 	}
 	$avg_price /= count($all_prices);
-	echo "<br><b>PREZZO MEDIO PER $product $value: </b>". round($avg_price, 2) . " EURO<br>";
+	echo "<br><b>PREZZO MEDIO: </b>". round($avg_price, 2) . " EURO<br>";
+
+	$avg_timestamp = 0;
+	foreach ($all_timestamp as $val)
+	{
+		$avg_timestamp += $val;
+	}
+	$avg_timestamp /= count($all_timestamp);
+	echo "<b>ORA MEDIA PER: </b>". data("h:i:s", $avg_timestamp) . " EURO<br>";
 }
 ?>
