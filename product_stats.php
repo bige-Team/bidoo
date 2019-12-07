@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="style.css">
 <form>
 	<input type="text" name="product" placeholder="Product Name">
 	<input type="number" name="value" placeholder="Value">
@@ -51,7 +52,7 @@ if(isset($_REQUEST['btnOK']))
 		$avg_price = ($avg_price/count($all_prices))/100;
 		echo "<br><b>PREZZO MEDIO: </b>". round($avg_price, 2) . " EURO";
 		echo "<br><b>PREZZO MASSIMO: </b>". (max($all_prices)/100) . " EURO";
-		echo "<br><b>PREZZO MASSIMO: </b>". (min($all_prices)/100) . " EURO<br>";
+		echo "<br><b>PREZZO MINIMO: </b>". (min($all_prices)/100) . " EURO<br>";
 		
 		/*
 			Range di ore conto per tutte le aste quante puntate sono state usate in quel range di tempo
