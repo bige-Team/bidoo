@@ -64,12 +64,9 @@ if(isset($_REQUEST['btnOK']) && isset($_REQUEST['value']))
 		}
 		foreach ($group_by_time as $val => $hour)
 		{
-			print_r($val);
-			echo "<br><br>";
-			print_r($hour);
 			if(count($val) > 0)
 			{
-				echo "<b>ORA $hour: </b>";
+				echo "<b>ORA " . print_r($hour) . ": </b>";
 				$avg_per_hour = 0;
 				for ($i=0; $i < count($val); $i++)
 				{ 
