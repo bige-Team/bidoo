@@ -45,7 +45,7 @@ if(isset($_REQUEST['btnOK']))
 	{
 		$avg_price += $val;
 	}
-	$avg_price /= count($all_prices);
+	$avg_price = ($avg_price/count($all_prices))/100;
 	echo "<br><b>PREZZO MEDIO: </b>". round($avg_price, 2) . " EURO<br>";
 
 	$avg_timestamp = 0;
@@ -54,6 +54,6 @@ if(isset($_REQUEST['btnOK']))
 		$avg_timestamp += $val;
 	}
 	$avg_timestamp /= count($all_timestamp);
-	echo "<b>ORA MEDIA PER: </b>". date("h:i:s", $avg_timestamp) . " EURO<br>";
+	echo "<b>ORA MEDIA PER: </b>". date("H:i:s", $avg_timestamp) . "<br>";
 }
 ?>
