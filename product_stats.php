@@ -23,7 +23,7 @@ if(isset($_REQUEST['btnOK']))
 					    and (`a`.`terminated` = 1))");
 	$l->close();
 	$res = $res->fetch_all();
-
+	print_r($res);
 	$l = connect();
 	$all_prices = array();
 	$all_timestamp = array();
