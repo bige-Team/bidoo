@@ -58,6 +58,19 @@ if(isset($_REQUEST['btnOK']) && isset($_REQUEST['value']))
 		}
 		$avg_timestamp /= count($all_timestamp);
 		echo "<b>ORA MEDIA VINCITA: </b>". date("H:i:s", $avg_timestamp) . "<br>";
+
+		$group_by_time = array();
+		for($i=12; $i < 24; $i++)
+		{ 
+			foreach($all_timestamp as $val)
+			{
+				if(date("H", $val) == $i)
+				{
+					$group_by_time[$i][] = $val;
+				}
+			}
+		}
+		print_r($group_by_time);
 	}
 	else
 		echo "<br><b>PRODOTTO NON TROVATO!</b><br>";	
