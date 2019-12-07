@@ -11,15 +11,16 @@ if(isset($_REQUEST['btnOK']) && isset($_REQUEST['value']))
 	$product = $_REQUEST['product'];
 	$value = $_REQUEST['value'];
 	$l = connect_to_stats();
-	$res = $l->query("select
-					    `a`.`name` AS `name`,
-					    `a`.`id` AS `id`,
-					    `a`.`terminated` AS `terminated`
-					from
-					    `auction_tracking` `a`
-					where
-					    ((`a`.`name` like '%$product%')
-					    and (`a`.`name` like '%$value\_%'))");
+	$res = $l->query("SELECT
+					    a.name,
+					    a.id,
+					    a.terminated
+					FROM
+					    auction_tracking AS a
+					WHERE
+					    ((a.name like '%amazon%')
+					    AND (a.name like '%10\_%'))
+					    AND a.terminated = 1");
 	$l->close();
 	$res = $res->fetch_all();
 
@@ -50,15 +51,6 @@ if(isset($_REQUEST['btnOK']) && isset($_REQUEST['value']))
 		$avg_price = ($avg_price/count($all_prices))/100;
 		echo "<br><b>PREZZO MEDIO: </b>". round($avg_price, 2) . " EURO<br>";
 
-		//No sense because auctions stop for 12 hours!
-		$avg_timestamp = 0;
-		foreach ($all_timestamp as $val)
-		{
-			$avg_timestamp += $val;
-		}
-		$avg_timestamp /= count($all_timestamp);
-		echo "<b>ORA MEDIA VINCITA: </b>". date("H:i:s", $avg_timestamp) . "<br>";
-
 		$group_by_time = array();
 		for($i=12; $i < 24; $i++)
 		{ 
@@ -70,7 +62,20 @@ if(isset($_REQUEST['btnOK']) && isset($_REQUEST['value']))
 				}
 			}
 		}
-		print_r($group_by_time);
+		foreach ($group_by_time as $val => $hour)
+		{
+			if(count($val) > 0)
+			{
+				echo "<b>ORA $hour: </b>";
+				$avg_per_hour = 0;
+				for ($i=0; $i < count($val); $i++)
+				{ 
+					$avg_per_hour += $val[$i];
+				}
+				$avg_per_hour /= count($val);
+				echo date("H:i:s", $avg_per_hour) . "<br>";
+			}
+		}
 	}
 	else
 		echo "<br><b>PRODOTTO NON TROVATO!</b><br>";	
