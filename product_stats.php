@@ -13,7 +13,8 @@ if(isset($_REQUEST['btnOK']))
 	$l = connect_to_stats();
 	$res = $l->query("SELECT
 					    `a`.`name` AS `name`,
-					    `a`.`id` AS `id`
+					    `a`.`id` AS `id`,
+					    `a`.`terminated` AS `terminated`
 					from
 					    `auction_tracking` `a`
 					where
