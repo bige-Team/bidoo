@@ -42,7 +42,7 @@ if(isset($_REQUEST['btnOK']) && isset($_REQUEST['value']))
 	$l->close();
 	if(count($all_prices) != 0)
 	{
-		echo "<br><b>PRODOTTO $product $value VALUTATO SU " . count($all_prices) . "</b><br>";
+		echo "<br><b>PRODOTTO $product $value VALUTATO SU " . count($all_prices) . " ASTE</b><br>";
 		$avg_price = 0;
 		foreach ($all_prices as $val)
 		{
@@ -66,7 +66,7 @@ if(isset($_REQUEST['btnOK']) && isset($_REQUEST['value']))
 		{
 			if(count($val) > 0)
 			{
-				echo "<b>ORA " . print_r($hour) . ": </b>";
+				echo "<b>ORA " . $hour . ": </b>";
 				$avg_per_hour = 0;
 				for ($i=0; $i < count($val); $i++)
 				{ 
