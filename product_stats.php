@@ -50,7 +50,7 @@ if(isset($_REQUEST['btnOK']))
 		}
 		$avg_price = ($avg_price/count($all_prices))/100;
 		echo "<br><b>PREZZO MEDIO: </b>". round($avg_price, 2) . " EURO<br>";
-		
+		/*
 		$group_by_time = array();
 		for($i=12; $i < 24; $i++)
 		{ 
@@ -76,7 +76,7 @@ if(isset($_REQUEST['btnOK']))
 				echo date("H:i:s", $avg_per_hour) . "<br>";
 			}
 		}
-		
+		*/
 	}
 	else
 		echo "<br><b>PRODOTTO NON TROVATO!</b><br>";	
