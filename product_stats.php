@@ -27,6 +27,10 @@ if(isset($_REQUEST['btnOK']))
 
 	$l = connect();
 	$all_prices = array();
+	$asta_max = "";
+	$i_max = 0;
+	$asta_min = "";
+	$i_min = 0;
 	foreach ($auction_names as $key => $val)
 	{
 		$table_name = $val[0];
@@ -36,6 +40,16 @@ if(isset($_REQUEST['btnOK']))
 			$res = $l->query("SELECT n_puntate FROM $table_name ORDER BY n_puntate DESC LIMIT 1");
 			$res = $res->fetch_all();
 			$all_prices[] =  $res[0][0];
+			if($res[0][0] >= $all_prices[$i_max])
+			{
+				$i_max = count($all_prices)-1;
+				$asta_max = $table_name;
+			}
+			if($res[0][0] >= $all_prices[$i_min])
+			{
+				$i_min = count($all_prices)-1;
+				$asta_min = $table_name;
+			}
 		}
 	}
 	$l->close();
@@ -49,9 +63,10 @@ if(isset($_REQUEST['btnOK']))
 			$avg_price += $val;
 		}
 		$avg_price = ($avg_price/count($all_prices))/100;
-		echo "<br><b>PREZZO MEDIO: </b>". round($avg_price, 2) . " EURO";
-		echo "<br><b>PREZZO MASSIMO: </b>". (max($all_prices)/100) . " EURO";
-		echo "<br><b>PREZZO MINIMO: </b>". (min($all_prices)/100) . " EURO<br>";
+		echo "<br>";
+		echo "<b>PREZZO MEDIO: </b>". round($avg_price, 2) . " EURO<br>";
+		echo "<b>PREZZO MASSIMO: </b>". (max($all_prices)/100) . " EURO" . $asta_max . "<br>";
+		echo "<b>PREZZO MINIMO: </b>". (min($all_prices)/100) . " EURO" . $asta_min . "<br>";
 		
 		/*
 			Range di ore conto per tutte le aste quante puntate sono state usate in quel range di tempo
