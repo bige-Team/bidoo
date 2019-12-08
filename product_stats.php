@@ -84,7 +84,7 @@ if(isset($_REQUEST['btnOK']))
 		$l->close();
 		foreach ($puntate_per_hour as $key => $value)
 		{
-			$puntate_per_hour[$key] = round($value/count($puntate_per_hour));
+			$puntate_per_hour[$key] = round($value/count($auction_names));
 		}
 		ksort($puntate_per_hour); #Array ( [11] => 502 [12] => 282...)
 		echo "<br>";
