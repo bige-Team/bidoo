@@ -1,7 +1,9 @@
 <link rel="stylesheet" type="text/css" href="style.css">
-<form>
+<form class="login">
+	<div class="form-group">
 	<input type="text" name="product" placeholder="Product Name">
 	<input type="number" name="value" placeholder="Value">
+	</div>
 	<button name="btnOK">OK</button>
 </form>
 
