@@ -87,7 +87,7 @@ if(isset($_REQUEST['btnOK']))
 		}
 		ksort($puntate_per_hour); #Array ( [11] => 502 [12] => 282...)
 		
-		foreach ($variable as $key => $value) 
+		foreach ($puntate_per_hour as $key => $value) 
 		{
 			echo "<b>ORE $key: </b>$value puntate usate mediamente<br>";
 		}
