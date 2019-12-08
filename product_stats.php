@@ -22,24 +22,23 @@ if(isset($_REQUEST['btnOK']))
 					    and (`a`.`name` like '%$value\_%')
 					    and (`a`.`terminated` = 1))");
 	$l->close();
-	$res = $res->fetch_all();
+	$auction_names = $res->fetch_all();
 
 	$l = connect();
 	$all_prices = array();
-	$all_timestamp = array();
-	foreach ($res as $key => $val)
+	foreach ($auction_names as $key => $val)
 	{
 		$table_name = $val[0];
 		$is_terminated = $val[2];
 		if($is_terminated == TRUE)
 		{
-			$res = $l->query("SELECT n_puntate, time_stamp FROM $table_name ORDER BY n_puntate DESC LIMIT 1");
+			$res = $l->query("SELECT n_puntate FROM $table_name ORDER BY n_puntate DESC LIMIT 1");
 			$res = $res->fetch_all();
-			$all_prices[] = $res[0][0];
-			$all_timestamp[] = $res[0][1];
+			$all_prices[] =  $res[0][0];
 		}
 	}
 	$l->close();
+
 	if(count($all_prices) != 0)
 	{
 		echo "<br><b>PRODOTTO $product $value VALUTATO SU " . count($all_prices) . " ASTE</b><br>";
@@ -56,6 +55,28 @@ if(isset($_REQUEST['btnOK']))
 		/*
 			Range di ore conto per tutte le aste quante puntate sono state usate in quel range di tempo
 		*/
+		$puntate_per_hour = array();
+		$l = connect();
+		for ($i=0; $i < count($auction_names); $i++)
+		{ 
+			$res = $l->query("SELECT 
+					count(*) AS tot_puntate,
+					t.time_hour
+				FROM(SELECT
+						n_puntate,
+						HOUR(FROM_UNIXTIME(time_stamp)) AS time_hour
+					FROM $auction_names[$i]) AS t
+				GROUP BY t.time_hour");
+			$res = $res->fetch_all();
+			foreach ($res as $column => $records)
+			{
+				
+			}
+			$puntate_per_hour[$i] += $res[0][]
+		}
+		$l->close();
+
+
 		#NO SENSE
 			/*
 		$group_by_time = array();
