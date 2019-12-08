@@ -55,6 +55,7 @@ if(isset($_REQUEST['btnOK']))
 		/*
 			Range di ore conto per tutte le aste quante puntate sono state usate in quel range di tempo
 		*/
+		
 		$puntate_per_hour = array();
 		$l = connect();
 		foreach  ($auction_names as $key => $val)
@@ -69,43 +70,18 @@ if(isset($_REQUEST['btnOK']))
 					FROM $table_name) AS t
 				GROUP BY t.time_hour");
 			$res = $res->fetch_all();
-
-			for ($j=11; $j < 24; $j++) 
+			
+			foreach ($res as $key => $value)
 			{
-				$puntate_per_hour[$j] = $res[0][$j];
+				$n_puntate = $value[0];
+				$time_hour = $value[1];
+				if(!isset($puntate_per_hour[$time_hour]))
+					$puntate_per_hour[$time_hour] += $n_puntate; 
+				else
+					$puntate_per_hour[$time_hour] = $n_puntate; 
 			}
 		}
 		$l->close();
-
-
-		#NO SENSE
-			/*
-		$group_by_time = array();
-		for($i=12; $i < 24; $i++)
-		{ 
-			foreach($all_timestamp as $val)
-			{
-				if(date("H", $val) == $i)
-				{
-					$group_by_time[$i][] = $val;
-				}
-			}
-		}
-		foreach ($group_by_time as $hour => $val)
-		{
-			if(count($val) > 0)
-			{
-				echo "<b>ORA " . $hour . ": </b>";
-				$avg_per_hour = 0;
-				for ($i=0; $i < count($val); $i++)
-				{ 
-					$avg_per_hour += $val[$i];
-				}
-				$avg_per_hour /= count($val);
-				echo date("H:i:s", $avg_per_hour) . "<br>";
-			}
-		}
-		*/
 	}
 	else
 		echo "<br><b>PRODOTTO NON TROVATO!</b><br>";	

@@ -30,20 +30,17 @@ foreach  ($auction_names as $key => $val)
 			FROM $table_name) AS t
 		GROUP BY t.time_hour");
 	$res = $res->fetch_all();
-	echo "<prev>";
-	print_r($res);
-	echo "</prev>";
+
 	foreach ($res as $key => $value)
 	{
 		$n_puntate = $value[0];
 		$time_hour = $value[1];
+		if(!isset($puntate_per_hour[$time_hour]))
+			$puntate_per_hour[$time_hour] += $n_puntate; 
+		else
+			$puntate_per_hour[$time_hour] = $n_puntate; 
 	}
-	/*
-	for ($j=11; $j < 24; $j++) 
-	{
-		$puntate_per_hour[$j] = $res[0][$j];
-	}
-	*/
 }
 $l->close();
+print_r($puntate_per_hour);
 ?>
