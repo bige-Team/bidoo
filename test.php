@@ -36,9 +36,9 @@ foreach  ($auction_names as $key => $val)
 		$n_puntate = $value[0];
 		$time_hour = $value[1];
 		if(!isset($puntate_per_hour[$time_hour]))
-			$puntate_per_hour[$time_hour] += $n_puntate; 
-		else
 			$puntate_per_hour[$time_hour] = $n_puntate; 
+		else
+			$puntate_per_hour[$time_hour] += $n_puntate; 
 	}
 }
 $l->close();
