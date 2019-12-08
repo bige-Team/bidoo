@@ -33,6 +33,11 @@ foreach  ($auction_names as $key => $val)
 	echo "<prev>";
 	print_r($res);
 	echo "</prev>";
+	foreach ($res as $key => $value)
+	{
+		$n_puntate = $value[0];
+		$time_hour = $value[1];
+	}
 	/*
 	for ($j=11; $j < 24; $j++) 
 	{
