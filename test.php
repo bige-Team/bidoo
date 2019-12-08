@@ -24,7 +24,7 @@ for ($i=0; $i < count($auction_names); $i++)
 		FROM(SELECT
 				n_puntate,
 				HOUR(FROM_UNIXTIME(time_stamp)) AS time_hour
-			FROM $auction_names[$i]) AS t
+			FROM $auction_names[$i][0]) AS t
 		GROUP BY t.time_hour");
 	$res = $res->fetch_all();
 	print_r($res);
