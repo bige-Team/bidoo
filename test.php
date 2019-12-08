@@ -46,6 +46,6 @@ foreach ($puntate_per_hour as $key => $value)
 {
 	$puntate_per_hour[$key] = round($value/count($puntate_per_hour));
 }
-ksort($puntate_per_hour)
+ksort($puntate_per_hour);
 print_r($puntate_per_hour);
 ?>
