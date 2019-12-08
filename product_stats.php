@@ -55,7 +55,6 @@ if(isset($_REQUEST['btnOK']))
 		/*
 			Range di ore conto per tutte le aste quante puntate sono state usate in quel range di tempo
 		*/
-		
 		$puntate_per_hour = array();
 		$l = connect();
 		foreach  ($auction_names as $key => $val)
@@ -70,18 +69,28 @@ if(isset($_REQUEST['btnOK']))
 					FROM $table_name) AS t
 				GROUP BY t.time_hour");
 			$res = $res->fetch_all();
-			
+
 			foreach ($res as $key => $value)
 			{
 				$n_puntate = $value[0];
 				$time_hour = $value[1];
 				if(!isset($puntate_per_hour[$time_hour]))
-					$puntate_per_hour[$time_hour] += $n_puntate; 
-				else
 					$puntate_per_hour[$time_hour] = $n_puntate; 
+				else
+					$puntate_per_hour[$time_hour] += $n_puntate; 
 			}
 		}
 		$l->close();
+		foreach ($puntate_per_hour as $key => $value)
+		{
+			$puntate_per_hour[$key] = round($value/count($puntate_per_hour));
+		}
+		ksort($puntate_per_hour); #Array ( [11] => 502 [12] => 282...)
+		
+		foreach ($variable as $key => $value) 
+		{
+			echo "<b>ORE $key: </b>$value puntate usate mediamente<br>";
+		}
 	}
 	else
 		echo "<br><b>PRODOTTO NON TROVATO!</b><br>";	
