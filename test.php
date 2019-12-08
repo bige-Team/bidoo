@@ -13,21 +13,24 @@ $res = $l->query("SELECT
 				    and (`a`.`terminated` = 1))");
 $l->close();
 $auction_names = $res->fetch_all();
-print_r($auction_names);
+
+
+
 $puntate_per_hour = array();
 $l = connect();
-for ($i=0; $i < count($auction_names); $i++)
-{ 
+foreach  ($auction_names as $key => $val)
+{
+	$table_name = $val[0];
 	$res = $l->query("SELECT 
 			count(*) AS tot_puntate,
 			t.time_hour
 		FROM(SELECT
 				n_puntate,
 				HOUR(FROM_UNIXTIME(time_stamp)) AS time_hour
-			FROM $auction_names[$i][0]) AS t
+			FROM $table_name) AS t
 		GROUP BY t.time_hour");
 	$res = $res->fetch_all();
-	print_r($res);
+
 	for ($j=11; $j < 24; $j++) 
 	{
 		$puntate_per_hour[$j] = $res[0][$j];
