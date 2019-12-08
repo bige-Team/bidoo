@@ -1,4 +1,5 @@
 <?php
+include "mysql_utils.php";
 $l = connect_to_stats();
 $res = $l->query("SELECT
 				    `a`.`name` AS `name`,
