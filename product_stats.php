@@ -1,10 +1,8 @@
 <link rel="stylesheet" type="text/css" href="style.css">
-<form class="login">
-	<div class="form-group">
-	<input type="text" name="product" placeholder="Product Name" class="user">
-	<input type="number" name="value" placeholder="Value" class="user">
-	</div>
-	<button name="btnOK" class="btn">OK</button>
+<form>
+	<input type="text" name="product" placeholder="Product Name">
+	<input type="number" name="value" placeholder="Value">
+	<button name="btnOK">OK</button>
 </form>
 
 <?php
