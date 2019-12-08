@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="style.css">
 <form>
 	<input type="text" name="product" placeholder="Product Name">
 	<input type="number" name="value" placeholder="Value">
@@ -86,10 +87,11 @@ if(isset($_REQUEST['btnOK']))
 			$puntate_per_hour[$key] = round($value/count($puntate_per_hour));
 		}
 		ksort($puntate_per_hour); #Array ( [11] => 502 [12] => 282...)
-		
+		echo "<br>";
+		echo "<b>PUNTATE MEDIE USATE PER ORA</b><br>";
 		foreach ($puntate_per_hour as $key => $value) 
 		{
-			echo "<b>ORE $key: </b>$value puntate usate mediamente<br>";
+			echo "<b>ORE $key: </b>$value puntate/a<br>";
 		}
 	}
 	else
