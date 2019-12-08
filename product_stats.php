@@ -91,7 +91,7 @@ if(isset($_REQUEST['btnOK']))
 		echo "<b>PUNTATE MEDIE USATE PER ORA</b><br>";
 		foreach ($puntate_per_hour as $key => $value) 
 		{
-			echo "<b>ORE $key: </b>$value puntate/a<br>";
+			echo "<b>ORE $key-". ($key+1) . ": </b>$value<br>";
 		}
 	}
 	else
