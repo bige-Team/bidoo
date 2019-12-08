@@ -8,8 +8,8 @@ $res = $l->query("SELECT
 				from
 				    `auction_tracking` `a`
 				where
-				    ((`a`.`name` like '%$product%')
-				    and (`a`.`name` like '%$value\_%')
+				    ((`a`.`name` like '%Amazon%')
+				    and (`a`.`name` like '%10\_%')
 				    and (`a`.`terminated` = 1))");
 $l->close();
 $auction_names = $res->fetch_all();
