@@ -42,5 +42,9 @@ foreach  ($auction_names as $key => $val)
 	}
 }
 $l->close();
+foreach ($puntate_per_hour as $key => $value)
+{
+	$puntate_per_hour[$key] = $value/count($puntate_per_hour);
+}
 print_r($puntate_per_hour);
 ?>
