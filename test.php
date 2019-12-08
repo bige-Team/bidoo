@@ -13,7 +13,7 @@ $res = $l->query("SELECT
 				    and (`a`.`terminated` = 1))");
 $l->close();
 $auction_names = $res->fetch_all();
-
+print_r($auction_names);
 $puntate_per_hour = array();
 $l = connect();
 for ($i=0; $i < count($auction_names); $i++)
