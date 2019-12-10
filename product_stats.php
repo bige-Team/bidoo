@@ -81,7 +81,7 @@ if(isset($_REQUEST['btnOK']))
 		$avg_price = ($avg_price/count($all_prices))/100;
 		echo "<br>";
 		echo "<b>PREZZO MEDIO: </b>". round($avg_price, 2) . " EURO<br>";
-		echo "<b>PREZZO MASSIMO: </b>". (max($all_prices)/100) . " EURO <a href='https://it.bidoo.com/auction.php?a=$asta_max' target='blank'>$asta_min</a><br>";
+		echo "<b>PREZZO MASSIMO: </b>". (max($all_prices)/100) . " EURO <a href='https://it.bidoo.com/auction.php?a=$asta_max' target='blank'>$asta_max</a><br>";
 		echo "<b>PREZZO MINIMO: </b>". (min($all_prices)/100) . " EURO <a href='https://it.bidoo.com/auction.php?a=$asta_min' target='blank'>$asta_min</a><br>";
 		
 		/*
