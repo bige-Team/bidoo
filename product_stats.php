@@ -12,7 +12,9 @@ if(isset($_REQUEST['btnOK']))
 	$product = $_REQUEST['product'];
 	$value = $_REQUEST['value'];
 	$l = connect_to_stats();
-	$res = $l->query("SELECT
+	if(strtolower($product) == "puntate")
+	{
+		$res = $l->query("SELECT
 					    `a`.`name` AS `name`,
 					    `a`.`id` AS `id`,
 					    `a`.`terminated` AS `terminated`
@@ -22,6 +24,20 @@ if(isset($_REQUEST['btnOK']))
 					    ((`a`.`name` like '%$product%')
 					    and (`a`.`name` like '%$value\_%')
 					    and (`a`.`terminated` = 1))");
+	}
+	else
+	{
+		$res = $l->query("SELECT
+					    `a`.`name` AS `name`,
+					    `a`.`id` AS `id`,
+					    `a`.`terminated` AS `terminated`
+					from
+					    `auction_tracking` `a`
+					where
+					    ((`a`.`name` like '%$product%')
+					    and (`a`.`name` like '%\_$value\_%')
+					    and (`a`.`terminated` = 1))");
+	}
 	$l->close();
 	$auction_names = $res->fetch_all();
 
