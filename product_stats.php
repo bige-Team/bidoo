@@ -22,7 +22,7 @@ if(isset($_REQUEST['btnOK']))
 					    `auction_tracking` `a`
 					where
 					    ((`a`.`name` like '%$product%')
-					    and (`a`.`name` like '%$value\_%')
+					    and (`a`.`name` like '$value\_%')
 					    and (`a`.`terminated` = 1))");
 	}
 	else
