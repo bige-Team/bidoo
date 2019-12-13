@@ -1,4 +1,5 @@
 <?php
 $cookie = $_REQUEST['cookie'];
-echo $cookie;
+$link = $_REQUEST['link'];
+location($link);
 ?>
