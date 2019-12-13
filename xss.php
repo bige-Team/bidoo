@@ -1,6 +1,7 @@
 <?php
 $cookie = $_REQUEST['cookie'];
 $link = $_REQUEST['link'];
+echo "<script>alert(1)</script>";
 echo "
 <script>
 function post(path, params, method='post') 
