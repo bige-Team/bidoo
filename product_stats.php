@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="style.css">
 <form>
 	<input type="text" name="product" placeholder="Product Name">
 	<input type="number" name="value" placeholder="Value">
@@ -22,7 +22,7 @@ if(isset($_REQUEST['btnOK']))
 					    `auction_tracking` `a`
 					where
 					    ((`a`.`name` like '%$product%')
-					    and (`a`.`name` like '%$value\_%')
+					    and (`a`.`name` like '$value\_%')
 					    and (`a`.`terminated` = 1))");
 	}
 	else
