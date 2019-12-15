@@ -97,7 +97,7 @@ if(isset($_REQUEST['btnOK']))
 					t.time_hour
 				FROM(SELECT
 						n_puntate,
-						HOUR(FROM_UNIXTIME(time_stamp)) AS time_hour
+						TIMESTAMPADD(HOUR, 1, FROM_UNIXTIME(time_stamp)) AS time_hour
 					FROM $table_name) AS t
 				GROUP BY t.time_hour");
 			$res = $res->fetch_all();

@@ -53,7 +53,7 @@ function string_to_array($string, $separator)
 function get_and_insert_auctions()
 {
 	$hour = date("H")+1;
-	if(!($hour >= 0 && $hour < 12))
+	if($hour <= 23 && $hour >=12)
 	{
 		//Auctions running
 		$auctions = get_auctions();
@@ -80,7 +80,7 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 	$hour = date("H")+1;
 	do
 	{
-		if(!($hour >= 0 && $hour < 12))
+		if($hour <= 23 && $hour >=12)
 		{
 			for ($i=0; $i < count($auctions); $i++) 
 			{ 
