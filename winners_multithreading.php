@@ -1,6 +1,6 @@
 <?php
 include_once "mysql_utils.php";
-$offset = 7400000;
+$offset = 0;
 $n_thread = 6;
 $opts = array('http'=>array('timeout'=>1,));
 $ctx = stream_context_create($opts);
