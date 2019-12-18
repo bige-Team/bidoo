@@ -19,8 +19,8 @@ function child_loop($n_thread, $index)
 	echo "Started " . getmypid() . "\n";
 	while(true)
 	{
-		$name = get_name($id);
-		update_name($name, $i);
+		$name = get_name($index);
+		update_name($name, $index);
 		$index += $n_thread;
 	}	
 }
@@ -42,5 +42,5 @@ function get_name($id)
 }
 function update_name($name, $id)
 {
-	query("UPDATE winners SET nome = '$name' WHERE id_asta = $id");
+	query_to_bidoo_stats("UPDATE winners SET nome = '$name' WHERE id_asta = $id");
 }
