@@ -12,7 +12,7 @@ if(isset($_REQUEST['btnOK']))
 	echo "<b>$auction</b>";
 
 	//Utenti che partecipano
-	$users = query_to_bidoo_stats("SELECT DISTINCT a.id_utente FROM $auction AS a");
+	$users = query("SELECT a.id_utente, COUNT(*) AS puntate_usate FROM $auction AS a GROUP BY a.id_utente");
 	$users = $users->fetch_all();
 	print_r($users);
 	foreach ($users as $key => $value)
