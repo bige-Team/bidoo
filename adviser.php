@@ -10,7 +10,7 @@ include_once "mysql_utils.php";
 if(isset($_REQUEST['btnOK']))
 {
 	$auction = $_REQUEST['auction'];
-	$parts = split('_', $auction);
+	$parts = explode('_', $auction);
 	if(ctype_digit($parts[0]))//Check if a string contains numbers
 	{
 		//Case 1000_Puntate...

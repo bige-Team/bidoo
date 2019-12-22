@@ -6,6 +6,7 @@ if(isset($_REQUEST['id_utente']))
 
 	$id_utente = $_REQUEST['id_utente'];
 	echo "<h3>$id_utente</h3>";
+	
 }
 else
 {

@@ -1,6 +1,4 @@
 <?php
-while($hour <= 23 && $hour >=12)
-{
-	
-}
+$res = split("_", "ciao_come_va");
+print_r($res);
 ?>
