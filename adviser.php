@@ -29,7 +29,5 @@ if(isset($_REQUEST['btnOK']))
 		echo "</tr>";
 	}
 	echo "</table>";
-
-	//Controlli nella tabella user_ranking
 }
 ?>
