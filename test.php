@@ -1,4 +1,6 @@
 <?php
-$res = split("_", "ciao_come_va");
-print_r($res);
+include_once "bid_utils.php";
+echo "<p>";
+print_r(get_auctions());
+echo "</p>";
 ?>
