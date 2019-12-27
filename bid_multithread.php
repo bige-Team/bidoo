@@ -42,24 +42,14 @@ function parent_loop()
 
 	while(true)
 	{
-		$hour = date("H")+1;
-		if($hour <= 23 && $hour >=12)
-		{
-			sleep(60);//1 Minutes
-			//echo "[parent]: Gathering auctions..." . date("H:i:s") . "\n";
-			$shm_key = ftok(__FILE__, 'b');
-			$shm_id = shmop_open($shm_key, "w", 0, 0);
-			shmop_write($shm_id, 1, 0);//Locking
-			$auctions = get_and_insert_auctions();
-			shmop_write($shm_id, 0, 0);//Unlocking
-			shmop_close($shm_id);
-		}
-		else
-		{
-			echo "[parent]: Auctions in pause " . $hour . "\n";
-			sleep(600);#Sleep 10 minutes
-			$hour = date("H")+1;
-		}		
+		sleep(60);//1 Minutes
+		//echo "[parent]: Gathering auctions..." . date("H:i:s") . "\n";
+		$shm_key = ftok(__FILE__, 'b');
+		$shm_id = shmop_open($shm_key, "w", 0, 0);
+		shmop_write($shm_id, 1, 0);//Locking
+		$auctions = get_and_insert_auctions();
+		shmop_write($shm_id, 0, 0);//Unlocking
+		shmop_close($shm_id);	
 	}
 }
 

@@ -99,7 +99,7 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 				elseif(!is_array($res) && $res == "CLOSED")
 				{
 					#Auction closed
-					echo "[" . getmypid() . "]: Auction $name closed" . date("H:i:s") . "\n";
+					//echo "[" . getmypid() . "]: Auction $name closed" . date("H:i:s") . "\n";
 					$pos_to_delete[] = $i;				
 				}
 			}
@@ -132,7 +132,7 @@ function analize_auctions($auctions, $auctions_count, $max_auctions)
 					$l->query("UPDATE auction_tracking SET auction_tracking.assigned=1 WHERE auction_tracking.name='$current'");
 				}
 				$l->close();
-				echo "[" . getmypid() . "]: Analizing $auctions_count, need $needed_auctions, receiving " . count($new_auctions) . " - " . date("H:i:s") . "\n";
+				//echo "[" . getmypid() . "]: Analizing $auctions_count, need $needed_auctions, receiving " . count($new_auctions) . " - " . date("H:i:s") . "\n";
 				foreach ($new_auctions as $key => $value) 
 				{
 					$state = create_table($value[0]);
