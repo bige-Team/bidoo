@@ -11,7 +11,7 @@ shmop_close($shm_id);
 for($i = 0; $i < 5; $i++)
 {
 	$hour = date("H")+1;
-	while($hour <= 23 && $hour >=12)
+	while(!($hour <= 23 && $hour >=12))
 	{
 		echo "Auctions in pause " . $hour . "\n";
 		sleep(600);#Sleep 10 minutes
