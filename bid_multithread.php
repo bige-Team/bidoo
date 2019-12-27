@@ -42,6 +42,7 @@ function parent_loop()
 
 	while(true)
 	{
+		$hour = date("H")+1;
 		if($hour <= 23 && $hour >=12)
 		{
 			sleep(60);//1 Minutes
@@ -52,6 +53,12 @@ function parent_loop()
 			$auctions = get_and_insert_auctions();
 			shmop_write($shm_id, 0, 0);//Unlocking
 			shmop_close($shm_id);
+		}
+		else
+		{
+			echo "[parent]: Auctions in pause " . $hour . "\n";
+			sleep(600);#Sleep 10 minutes
+			$hour = date("H")+1;
 		}		
 	}
 }
