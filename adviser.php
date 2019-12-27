@@ -18,8 +18,8 @@ if(isset($_REQUEST['btnOK']))
 	}
 	else
 	{
-		//Case Amazon_100...
-		echo "<a href='product_stats.php?product=$parts[0]&value=$parts[2]&btnOK=' target='_blank'>$auction</a>";
+		//Case Buono_Amazon_100...
+		echo "<a href='product_stats.php?product=$parts[1]&value=$parts[2]&btnOK=' target='_blank'>$auction</a>";
 	}
 
 	//Utenti che partecipano
