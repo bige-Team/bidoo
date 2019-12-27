@@ -1,5 +1,5 @@
 <link rel="stylesheet" type="text/css" href="style.css">
-<form method="post">
+<form method="get">
 	<input type="text" name="auction" placeholder="Auction Name">
 	<button name="btnOK">Ok</button>
 </form>
