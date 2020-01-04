@@ -5,7 +5,7 @@ if(isset($_REQUEST['id_utente']))
 	include "mysql_utils.php";
 
 	$id_utente = $_REQUEST['id_utente'];
-	echo "<h3>$id_utente</h3><br><br>";
+	echo "<h2>$id_utente</h2>";
 
 	$res = query_to_bidoo_stats("SELECT u.puntate_usate, u.aste_partecipate FROM users_ranking AS u WHERE u.id_utente='$id_utente'");
 	$res = $res->fetch_all();
