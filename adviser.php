@@ -1,9 +1,11 @@
+<body onload="setTimeout('location.reload(true);', 15000);">
+
 <link rel="stylesheet" type="text/css" href="style.css">
 <form method="get">
 	<input type="text" name="auction" placeholder="Auction Name">
 	<button name="btnOK">Ok</button>
 </form>
-
+</body>
 <?php
 include_once "mysql_utils.php";
 
@@ -42,8 +44,7 @@ if(isset($_REQUEST['btnOK']))
 		echo "<td><a href='user_info.php?id_utente=$id_utente' target='_blank'>$id_utente</a></td>";
 		echo "<td>$puntate_usate</td>";
 		$d1 = date_create($ultima_puntata);
-		$d2 = date_create("00:00:30");
-		date_add($d1, date_interval_create_from_date_string("2 minutes"));
+		date_add($d1, date_interval_create_from_date_string("30 seconds"));
 		$current = date("H:i:s");
 		if(strtotime($d1->format("H:i:s")) > strtotime($current))
 			echo "<td><mark>$ultima_puntata</mark></td>";
