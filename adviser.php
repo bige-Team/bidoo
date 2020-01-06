@@ -4,17 +4,6 @@
 	<button name="btnOK">Ok</button>
 </form>
 
-<script type="text/javascript">
-	function start()
-	{
-		location.reload();
-		setInterval(start(), 2000);
-		return;
-	}
-</script>
-
-<body onload="start()"></body>
-
 <?php
 include_once "mysql_utils.php";
 
@@ -54,5 +43,7 @@ if(isset($_REQUEST['btnOK']))
 		echo "</tr>";
 	}
 	echo "</table>";
+
+	
 }
 ?>
