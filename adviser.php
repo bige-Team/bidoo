@@ -23,7 +23,7 @@ if(isset($_REQUEST['btnOK']))
 	}
 
 	//Utenti che partecipano
-	$users = query("SELECT * FROM (SELECT a.id_utente, COUNT(*) AS puntate_usate, DATE_FORMAT(MAX(TIMESTAMPADD(HOUR, 1, FROM_UNIXTIME(a.time_stamp))), '%H:%i:%s') AS ultima_puntata, a.tipo_puntata FROM $auction AS a GROUP BY a.id_utente) AS t ORDER BY t.ultima_puntata ASC");
+	$users = query("SELECT * FROM (SELECT a.id_utente, COUNT(*) AS puntate_usate, DATE_FORMAT(MAX(TIMESTAMPADD(HOUR, 1, FROM_UNIXTIME(a.time_stamp))), '%H:%i:%s') AS ultima_puntata, a.tipo_puntata FROM $auction AS a GROUP BY a.id_utente) AS t ORDER BY t.ultima_puntata DESC");
 	$users = $users->fetch_all();
 	echo "<table>";
 	echo "<tr>";
