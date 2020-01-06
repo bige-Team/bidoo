@@ -1,4 +1,4 @@
-<body onload="setTimeout('location.reload(true);', 15000);">
+<body onload="setTimeout('location.reload(true);', 8000);">
 
 <link rel="stylesheet" type="text/css" href="style.css">
 <form method="get">
