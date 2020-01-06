@@ -41,7 +41,15 @@ if(isset($_REQUEST['btnOK']))
 		echo "<tr>";
 		echo "<td><a href='user_info.php?id_utente=$id_utente' target='_blank'>$id_utente</a></td>";
 		echo "<td>$puntate_usate</td>";
-		echo "<td>$ultima_puntata</td>";
+		$d1 = date_create($ultima_puntata);
+		$d2 = date_create("00:02:00");
+		date_add($d1, date_interval_create_from_date_string("2 minutes"));
+		$current = date("H:i:s");
+		if(strtotime($d1->format("H:i:s")) > strtotime($current))
+			echo "<td><mark>$ultima_puntata</mark></td>";
+		else
+			echo "<td>$ultima_puntata</td>";
+		
 		echo "<td>$tipo_puntata</td>";
 		echo "</tr>";
 	}
