@@ -16,6 +16,7 @@ if(isset($_REQUEST['id_utente']))
 
 		echo "<b>PUNTATE USATE: </b>$puntate_usate<br>";
 		echo "<b>ASTE PARTECIPATE: </b>$aste_partecipate";
+		echo "<b>MEDIA PUNTATE PER ASTA: </b>" . ($puntate_usate/$aste_partecipate);
 	}
 	else
 	{
