@@ -42,7 +42,7 @@ if(isset($_REQUEST['btnOK']))
 		echo "<td><a href='user_info.php?id_utente=$id_utente' target='_blank'>$id_utente</a></td>";
 		echo "<td>$puntate_usate</td>";
 		$d1 = date_create($ultima_puntata);
-		$d2 = date_create("00:00:07");
+		$d2 = date_create("00:00:30");
 		date_add($d1, date_interval_create_from_date_string("2 minutes"));
 		$current = date("H:i:s");
 		if(strtotime($d1->format("H:i:s")) > strtotime($current))
