@@ -23,29 +23,33 @@ if(isset($_REQUEST['id_utente']))
 		echo "<b>ASTE PARTECIPATE: </b>$aste_partecipate<br>";
 		echo "<b>MEDIA PUNTATE PER ASTA: </b>" . ($puntate_usate/$aste_partecipate) . "<br>";
 		echo "<br><br>";
-		echo "<b>ASTE VINTE</b><br>";
-		echo "<table>";
-		echo "<tr>";
-		echo "<td>ID ASTA</td>";
-		echo "<td>TIMESTAMP</td>";
-		echo "<td>NUMERO PUNTATE</td>";
-		echo "<td>TIPO PUNTATA</td>";
-		echo "</tr>";
-		foreach ($wins as $key => $value) 
+		if($isset($wins[0]))
 		{
-			$id_asta = $value[0];
-			$time_stamp = $value[1];
-			$n_puntate = $value[2];
-			$tipo_puntata = $value[3];
+			echo "<b>ASTE VINTE</b><br>";
+			echo "<table>";
 			echo "<tr>";
-			echo "<td><a href='https://it.bidoo.com/auction.php?a=$id_asta'>$id_asta</a></td>";
-			echo "<td>$time_stamp</td>";
-			echo "<td>$n_puntate</td>";
-			echo "<td>$tipo_puntata</td>";
+			echo "<td>ID ASTA</td>";
+			echo "<td>TIMESTAMP</td>";
+			echo "<td>NUMERO PUNTATE</td>";
+			echo "<td>TIPO PUNTATA</td>";
 			echo "</tr>";
+			foreach ($wins as $key => $value) 
+			{
+				$id_asta = $value[0];
+				$time_stamp = $value[1];
+				$n_puntate = $value[2];
+				$tipo_puntata = $value[3];
+				echo "<tr>";
+				echo "<td><a href='https://it.bidoo.com/auction.php?a=$id_asta' target='_blank'>$id_asta</a></td>";
+				echo "<td>$time_stamp</td>";
+				echo "<td>$n_puntate</td>";
+				echo "<td>$tipo_puntata</td>";
+				echo "</tr>";
+			}
+			echo "</table>";
 		}
-		echo "</table>";
-		print_r($wins);
+		else
+		echo "<b>NESSUNA ASTA VINTA</b><br>";			
 	}
 	else
 	{
