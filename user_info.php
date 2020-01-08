@@ -9,6 +9,11 @@ if(isset($_REQUEST['id_utente']))
 
 	$res = query_to_bidoo_stats("SELECT u.puntate_usate, u.aste_partecipate FROM users_ranking AS u WHERE u.id_utente='$id_utente'");
 	$res = $res->fetch_all();
+
+	//Take win auctions
+	$wins = query_to_bidoo_stats("SELECT w.id_asta, w.id_utente, w.time_stamp, w.n_puntate, w.tipo_puntata FROM winners AS w WHERE w.id_utente='$id_utente'");
+	$wins = $wins->fetch_all();
+
 	if(isset($res[0]))
 	{
 		$puntate_usate = $res[0][0];
@@ -17,6 +22,9 @@ if(isset($_REQUEST['id_utente']))
 		echo "<b>PUNTATE USATE: </b>$puntate_usate<br>";
 		echo "<b>ASTE PARTECIPATE: </b>$aste_partecipate<br>";
 		echo "<b>MEDIA PUNTATE PER ASTA: </b>" . ($puntate_usate/$aste_partecipate) . "<br>";
+		echo "<br><br>";
+		echo "<b>ASTE VINTE</b>";
+		print_r($wins);
 	}
 	else
 	{
