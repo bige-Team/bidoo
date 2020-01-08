@@ -32,10 +32,12 @@ else
 $l->close();
 $auction_names = $res->fetch_all();
 
+echo "<b>SCEGLI ASTA</b><br><br>";
+
 foreach ($auction_names as $key => $value) 
 {
 	$name = $value[0];
-	echo "<a href='https://it.bidoo.com/auction.php?a=$name' target='_blank'>$name</a>";
+	echo "<a href='https://it.bidoo.com/auction.php?a=$name' target='_blank'>$name</a><br>";
 }
 
 ?>
