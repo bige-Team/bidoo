@@ -1,4 +1,6 @@
 <?php
+include "mysql_utils.php";
+
 $product = $_REQUEST['product'];
 $value = $_REQUEST['value'];
 
