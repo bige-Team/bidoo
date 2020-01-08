@@ -26,43 +26,50 @@ function child_loop($n_thread, $index, $ctx)
 	//echo "Started " . getmypid() . "\n";
 	while(true)
 	{
-		$s = @file_get_contents("https://it.bidoo.com/data.php?ALL=$index&LISTID=0", false, $ctx);
-		if(FALSE === $s)
+		$hour = date("H")+1;
+		if($hour > 0 && $hour < 11)
 		{
-			//Stream failed
-			//echo "[" . getmypid() . "]: Failed stream with $index - " . date("H:i:s") . "\n";
-			continue;
-		}
-		else if(strpos($s, 'OFF') == true) 
-		{
-			//Auction finished
-			$fine = explode(';', $s);
-
-			$nome = $fine[4];
-			if(strlen($nome) > 4) 
+			$s = @file_get_contents("https://it.bidoo.com/data.php?ALL=$index&LISTID=0", false, $ctx);
+			if(FALSE === $s)
 			{
-				$puntate = $fine[3];
-				$time = $fine[2];
-				$tipo = $fine[5];
-
-				$link = connect_to_stats();
-				$res = $link->query("INSERT INTO winners VALUES ($index, '$nome', $time, $puntate, '$tipo')");
-				$link->close();
-				//echo "[" . getmypid() . "]: Inserted winner for $index with result $res - " . date("H:i:s") . "\n";		
+				//Stream failed
+				//echo "[" . getmypid() . "]: Failed stream with $index - " . date("H:i:s") . "\n";
+				continue;
 			}
-		}
-		else if(strpos($s, 'ON') == true) 
-		{
-			//Auction running
-			//echo "[" . getmypid() . "]: Auction $index running\n";
-		}
+			else if(strpos($s, 'OFF') == true) 
+			{
+				//Auction finished
+				$fine = explode(';', $s);
+
+				$nome = $fine[4];
+				if(strlen($nome) > 4) 
+				{
+					$puntate = $fine[3];
+					$time = $fine[2];
+					$tipo = $fine[5];
+
+					$link = connect_to_stats();
+					$res = $link->query("INSERT INTO winners VALUES ($index, '$nome', $time, $puntate, '$tipo')");
+					$link->close();
+					//echo "[" . getmypid() . "]: Inserted winner for $index with result $res - " . date("H:i:s") . "\n";		
+				}
+			}
+			else if(strpos($s, 'ON') == true) 
+			{
+				//Auction running
+				//echo "[" . getmypid() . "]: Auction $index running\n";
+			}
+			else
+			{
+				//echo "[" . getmypid() . "]: Reached the end with $index\n";
+				//exit();
+			}
+			$index += $n_thread;
+			}
 		else
 		{
-			//echo "[" . getmypid() . "]: Reached the end with $index\n";
-			//exit();
+			sleep(1800); #30 minutes
 		}
-		$index += $n_thread;
 	}
-	echo "Definitely an error\n";
 }
 ?>
