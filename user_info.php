@@ -23,7 +23,7 @@ if(isset($_REQUEST['id_utente']))
 		echo "<b>ASTE PARTECIPATE: </b>$aste_partecipate<br>";
 		echo "<b>MEDIA PUNTATE PER ASTA: </b>" . ($puntate_usate/$aste_partecipate) . "<br>";
 		echo "<br><br>";
-		if($isset($wins[0]))
+		if(isset($wins[0]))
 		{
 			echo "<b>ASTE VINTE</b><br>";
 			echo "<table>";
