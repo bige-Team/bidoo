@@ -76,7 +76,8 @@ if(isset($_REQUEST['btnOK']))
 		$avg_price = 0;
 		foreach ($all_prices as $val)
 		{
-			$avg_price += $val;
+			if($val != max($all_prices) && $val != min($all_prices))
+				$avg_price += $val;
 		}
 		$avg_price = ($avg_price/count($all_prices))/100;
 		echo "<br>";
