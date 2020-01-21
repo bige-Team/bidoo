@@ -72,6 +72,8 @@ if(isset($_REQUEST['btnOK']))
 
 	if(count($all_prices) != 0)
 	{
+		echo "<a href='choose_auction.php?product=$product&value=$value' target='_blank'>PUNTA</a><br>";
+
 		echo "<br><b>PRODOTTO $product $value VALUTATO SU " . count($all_prices) . " ASTE</b><br>";
 		$avg_price = 0;
 		foreach ($all_prices as $val)
